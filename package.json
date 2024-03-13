@@ -1,0 +1,17 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "dev": "cd SRAS-frontend && npm run dev",
+    "build-react": "cd SRAS-frontend && npm run build",
+    "start-proxy": "node proxy.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.3",
+    "http-proxy-middleware": "^2.0.6"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
