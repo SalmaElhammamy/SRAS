@@ -8,7 +8,6 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import { authorsTableData } from "@/data";
 import axios from "../API/axios";
 
 export function LiveTracking() {
