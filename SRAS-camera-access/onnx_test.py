@@ -20,13 +20,13 @@ camera = None
 camera_lock = threading.Lock()
 
 
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8n.onnx')
 
-if torch.cuda.is_available():
-    print("Model is using GPU")
-    model.to('cuda')
-else:
-    print("Model is using CPU")
+# if torch.cuda.is_available():
+#     print("Model is using GPU")
+#     model.to('cuda')
+# else:
+#     print("Model is using CPU")
 
 bounding_box_annotator = sv.BoundingBoxAnnotator()
 
@@ -50,7 +50,7 @@ def generate_frames(effect=None, thread_num=None):
 
         result = model(
             source=frame,
-            verbose=False
+            # verbose=False
         )[0]
 
         detections = sv.Detections.from_ultralytics(result)

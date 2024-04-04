@@ -3,7 +3,7 @@ from flask_cors import CORS
 import cv2
 import numpy as np
 import supervision as sv
-import threading
+from multiprocessing import Process, Lock, Manager
 import uuid
 from flask import jsonify
 
@@ -11,22 +11,35 @@ import torch
 from ultralytics import YOLO
 
 
-# Multi-threaded
+# Multi-process
 
 app = Flask(__name__)
 CORS(app)
 
 camera = None
-camera_lock = threading.Lock()
+
+camera_lock = Lock()
+
+model_manager = Manager()
+model_dict = model_manager.dict()
 
 
-model = YOLO('yolov8n.pt')
+def load_model(model_dict):
+    model = YOLO('yolov8x.pt')
 
-if torch.cuda.is_available():
-    print("Model is using GPU")
-    model.to('cuda')
-else:
-    print("Model is using CPU")
+    if torch.cuda.is_available():
+        print("Model is using GPU")
+        model.to('cuda')
+    else:
+        print("Model is using CPU")
+    model_dict['model'] = model
+
+
+def get_model(model_dict):
+    if 'model' not in model_dict:
+        load_model(model_dict)
+    return model_dict['model']
+
 
 bounding_box_annotator = sv.BoundingBoxAnnotator()
 
@@ -39,9 +52,10 @@ def get_camera():
         return camera
 
 
-def generate_frames(effect=None, thread_num=None):
+def generate_frames(effect=None, thread_num=None, model_dict=None):
+    model = get_model(model_dict)
     while True:
-        camera = get_camera()
+        camera = cv2.VideoCapture(0)
         success, frame = camera.read()
 
         if not success:
@@ -106,10 +120,15 @@ def video_feed_color(color_uuid):
             break
     if color:
         thread_num = color_uuid
-        t = threading.Thread(target=generate_frames, args=(color, thread_num))
-        t.start()
-        return Response(generate_frames(effect=color, thread_num=thread_num), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+        p = Process(target=generate_frames, args=(color, thread_num))
+        p.start()
+        p.join()
+        return Response(generate_frames(color), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 if __name__ == "__main__":
+    from multiprocessing import freeze_support
+    freeze_support()
+
     app.run(debug=True)

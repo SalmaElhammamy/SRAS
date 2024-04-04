@@ -26,3 +26,6 @@ dist-ssr
 *.sln
 *.sw?
 /SRAS-frontend/node_modules
+/SRAS-camera-access/venv
+/SRAS-camera-access/yolov8*
+/SRAS-mock-server/node_modules
