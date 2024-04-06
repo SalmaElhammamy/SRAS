@@ -29,3 +29,4 @@ dist-ssr
 /SRAS-camera-access/venv
 /SRAS-camera-access/yolov8*
 /SRAS-mock-server/node_modules
+/SRAS-gateway/node_modules

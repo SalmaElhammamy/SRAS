@@ -6,23 +6,9 @@ from kombu import Connection, Exchange, Queue, Producer
 import threading
 
 
-# This part is only for concurrency issues, and will be removed
-camera = None
-camera_lock = threading.Lock()
-
-
-def get_camera():
-    global camera
-    with camera_lock:
-        if camera is None:
-            camera = cv2.VideoCapture(0)
-        return camera
-
-
 class Config:
     broker_url = 'amqp://guest:guest@localhost:5672//'
-    # to be replaced with actual drivers
-    camera_drivers = ['green', 'red', 'blue']
+    camera_drivers = ['0', '1']
 
 
 connection = Connection(Config.broker_url)
@@ -47,10 +33,11 @@ class CameraProducer:
 
     def produce(self):
 
-        capture = get_camera()
+        capture = cv2.VideoCapture(int(self.driver))
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
         while True:
+            start_time = time.time()
             ret, frame = capture.read()
             if ret is True:
                 frame = cv2.resize(frame, None, fx=0.6, fy=0.6)
@@ -58,13 +45,17 @@ class CameraProducer:
                 encoded_frame = cv2.imencode('.jpg', frame, encode_param)[1]
                 self.producer.publish(encoded_frame.tobytes())
 
-            time.sleep(0.001)
+            processing_time = time.time() - start_time
+
+            sleep_time = max(0, (1/10) - processing_time)
+            time.sleep(sleep_time)
+
         capture.release()
 
 
 if __name__ == '__main__':
-    # producers = [CameraProducer(driver) for driver in Config.camera_drivers]
+    producers = [CameraProducer(driver) for driver in Config.camera_drivers]
 
-    # for producer in producers:
-    #     threading.Thread(target=producer.produce).start()
-    producer = CameraProducer(Config.camera_drivers[0]).produce()
+    for producer in producers:
+        threading.Thread(target=producer.produce).start()
+    # CameraProducer('0').produce()
