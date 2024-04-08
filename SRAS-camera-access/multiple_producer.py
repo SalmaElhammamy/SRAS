@@ -5,6 +5,8 @@ import time
 from kombu import Connection, Exchange, Queue, Producer
 import threading
 
+import sys
+
 
 class Config:
     broker_url = 'amqp://guest:guest@localhost:5672//'
@@ -13,6 +15,11 @@ class Config:
 
 connection = Connection(Config.broker_url)
 channel = connection.channel()
+
+
+def signal_handler(sig, frame):
+    print('Stopping the application...')
+    sys.exit(0)
 
 
 class CameraProducer:
@@ -31,12 +38,17 @@ class CameraProducer:
 
         self.queue.purge()
 
+        self.running = True
+
+    def stop(self):
+        self.running = False
+
     def produce(self):
 
         capture = cv2.VideoCapture(int(self.driver))
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
-        while True:
+        while self.running:
             start_time = time.time()
             ret, frame = capture.read()
             if ret is True:
@@ -47,7 +59,7 @@ class CameraProducer:
 
             processing_time = time.time() - start_time
 
-            sleep_time = max(0, (1/10) - processing_time)
+            sleep_time = max(0, (1/60) - processing_time)
             time.sleep(sleep_time)
 
         capture.release()
@@ -56,6 +68,20 @@ class CameraProducer:
 if __name__ == '__main__':
     producers = [CameraProducer(driver) for driver in Config.camera_drivers]
 
-    for producer in producers:
-        threading.Thread(target=producer.produce).start()
-    # CameraProducer('0').produce()
+    threads = []
+    try:
+        for producer in producers:
+            thread = threading.Thread(target=producer.produce)
+            threads.append(thread)
+            thread.start()
+
+        while True:
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt: Stopping producers")
+        for producer in producers:
+            producer.stop()
+
+        for thread in threads:
+            thread.join()

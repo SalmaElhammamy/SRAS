@@ -58,7 +58,7 @@ class Worker(ConsumerMixin):
         detections = sv.Detections.from_ultralytics(result)
         annotated_frame = bounding_box_annotator.annotate(image, detections)
 
-        _, jpeg_frame = cv2.imencode('.jpg', image)
+        _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
 
         Config.frames[self.driver] = jpeg_frame.tobytes()
 
