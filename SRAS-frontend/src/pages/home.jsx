@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
   CardBody,
   Typography,
 } from "@material-tailwind/react";
+
+import ReactPolygonDrawer from "react-polygon-drawer";
+import PolygonDrawer from "./polygonDrawer";
 
 const card = (
   <Card className="mb-8">
@@ -18,27 +21,41 @@ const card = (
 );
 
 export function Home() {
+  const [mouseClicked, setMouseClicked] = useState(false);
+  const width = 1000;
+  const height = 1000;
+  const existingCoordinates = [
+    {
+      x: 328,
+      y: 71,
+    },
+    {
+      x: 58,
+      y: 63,
+    },
+    {
+      x: 61,
+      y: 509,
+    },
+    {
+      x: 669,
+      y: 78,
+    },
+    {
+      x: 669,
+      y: 78,
+    },
+    {
+      x: 328,
+      y: 71,
+    },
+  ];
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card>
-        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
-            DASHBOARD
-          </Typography>
-        </CardHeader>
-        <CardBody className="px-0 pt-0 p-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {card}
-            {card}
-            {card}
-            {card}
-            {card}
-            {card}
-            {card}
-          </div>
-        </CardBody>
-      </Card>
-    </div>
+    <PolygonDrawer
+      height={height}
+      width={width}
+      existingCoordinates={existingCoordinates}
+    />
   );
 }
 

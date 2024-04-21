@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6",
+    "mapbox-gl": "^3.3.0",
     "mqtt": "^5.3.3",
     "path": "^0.12.7",
     "prop-types": "15.8.1",
@@ -23,6 +24,7 @@
     "react-apexcharts": "1.4.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.12.0",
+    "react-map-gl": "^7.1.7",
     "react-router-dom": "6.17.0",
     "react-toastify": "^9.1.3"
   },
