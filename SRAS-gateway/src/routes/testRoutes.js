@@ -51,4 +51,13 @@ router.delete("/products/:id", (req, res) => {
   }
 });
 
+router.post("/products", (req, res) => {
+  try {
+    const product = req.body;
+    products.push(product);
+    res.send("Product added").status(200);
+  } catch (error) {
+    res.send(error).status(500);
+  }
+});
 module.exports = router;
