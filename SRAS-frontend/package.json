@@ -21,6 +21,7 @@
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
     "react-icons": "^5.1.0",
+    "react-polygon-drawer": "^0.1.4",
     "react-pro-sidebar": "^0.7.1",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
