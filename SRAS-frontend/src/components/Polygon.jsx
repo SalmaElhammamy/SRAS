@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import reportImg from "../Img/report.jpg";
 
 const CustomButton = ({ text, onClick, sx }) => {
   return (
@@ -171,6 +172,9 @@ export default function PolygonDrawer(props) {
       spacing={4}
       sx={{
         padding: "2rem",
+        paddingLeft: "12% !important",
+        marginTop: "2.5rem !important",
+        zIndex: 100,
       }}
     >
       <Grid
@@ -192,9 +196,8 @@ export default function PolygonDrawer(props) {
               ? "auto"
               : "none",
 
-            backgroundColor: "black",
-            border: "1px solid red",
             position: "relative",
+            backgroundImage: `url(${reportImg})`,
           }}
         >
           {polygons.map(

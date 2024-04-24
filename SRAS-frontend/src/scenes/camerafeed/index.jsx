@@ -46,41 +46,12 @@ const FAQ = () => {
   ];
   // console.log(state);
 
-  const width = 1000;
-  const height = 600;
-  const existingCoordinates = [
-    {
-      x: 328,
-      y: 71,
-    },
-    {
-      x: 58,
-      y: 63,
-    },
-    {
-      x: 61,
-      y: 509,
-    },
-    {
-      x: 669,
-      y: 78,
-    },
-    {
-      x: 669,
-      y: 78,
-    },
-    {
-      x: 328,
-      y: 71,
-    },
-  ];
   return (
     <Box>
-      <PolygonDrawer
-        height={height}
-        width={width}
-        existingCoordinates={existingCoordinates}
-      />
+      <Box>
+        <Header />
+        <Cards cards={cards} />
+      </Box>
     </Box>
   );
 };

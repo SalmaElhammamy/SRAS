@@ -16,8 +16,8 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -31,7 +31,13 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       onClick={() => setSelected(title)}
       icon={icon}
     >
-      <Typography>{title}</Typography>
+      <Typography
+        sx={{
+          fontSize: "1.5rem !important",
+        }}
+      >
+        {title}
+      </Typography>
       <Link to={to} />
     </MenuItem>
   );
@@ -104,10 +110,10 @@ const Sidebar = () => {
               </Box>
               <Box textAlign="center">
                 <Typography
-                  // variant="h2"
-                  // color={colors.grey[100]}
-                  // fontWeight="bold"
-                  // sx={{ m: "10px 0 0 0" }}
+                // variant="h2"
+                // color={colors.grey[100]}
+                // fontWeight="bold"
+                // sx={{ m: "10px 0 0 0" }}
                 >
                   {/* Ed Roh */}
                 </Typography>
@@ -205,6 +211,9 @@ const Sidebar = () => {
               icon={<BarChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              sx={{
+                fontSize: "5rem !important",
+              }}
             />
             <Item
               title="Pie Chart"
