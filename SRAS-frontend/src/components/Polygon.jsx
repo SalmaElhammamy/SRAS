@@ -34,6 +34,7 @@ export default function PolygonDrawer(props) {
   const width = props.width;
   const existingCoordinates = props.existingCoordinates;
   const image = props.image;
+  const onClick = props.onClick;
 
   const navigate = useNavigate();
 
@@ -275,7 +276,7 @@ export default function PolygonDrawer(props) {
             <CustomButton
               text="Cancel"
               onClick={() => {
-                navigate(-1);
+                onClick(false);
               }}
             />
           </Stack>

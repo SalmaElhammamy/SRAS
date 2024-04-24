@@ -72,6 +72,7 @@ const Card = ({ title, imageIndex }) => {
             height={height}
             width={width}
             existingCoordinates={existingCoordinates}
+            onClick={setExpanded}
           />
           <div
             style={{
