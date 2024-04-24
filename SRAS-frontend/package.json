@@ -1,0 +1,56 @@
+{
+  "name": "react-admin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@iconscout/react-unicons": "^2.0.2",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "@nivo/bar": "^0.85.1",
+    "@nivo/core": "^0.85.1",
+    "@nivo/line": "^0.85.1",
+    "@nivo/pie": "^0.85.1",
+    "axios": "^1.6.8",
+    "chart.js": "^3.9.1",
+    "formik": "^2.2.9",
+    "framer-motion": "^11.0.28",
+    "jspdf": "^2.5.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^4.3.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.1.0",
+    "react-polygon-drawer": "^0.1.4",
+    "react-pro-sidebar": "^0.7.1",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
