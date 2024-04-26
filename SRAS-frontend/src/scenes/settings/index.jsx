@@ -3,6 +3,7 @@ import { tokens } from "../../theme";
 import React, { useState } from 'react';
 import "../camerafeed/camerafeed.css";
 import Cards from "../../components/Cards/Cards";
+import ProfileTabPanel from "./profile";
 
 const Settings = () => {
     const theme = useTheme();
@@ -43,34 +44,17 @@ const Settings = () => {
                 <Tab value="one" label="Profile" />
                 <Tab value="two" label="Camera Settings" />
             </Tabs>
-            <TabPanel value={value} index="one">
-                <Box sx={{ p: 2 }}>
-                    <TextField
-                        label="Name"
-                        variant="outlined"
-                        fullWidth
-                        value={profile.name}
-                        onChange={handleProfileChange('name')}
-                        sx={{ mb: 4 }}
+            
 
-                    />
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        fullWidth
-                        value={profile.email}
-                        onChange={handleProfileChange('email')}
-                        sx={{ mb: 4 }}
-                    />
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleSaveProfile}
-                    >
-                        Save
-                    </Button>
-                </Box>
-            </TabPanel>
+            <ProfileTabPanel
+                value={value}
+                index="one"
+                profile={profile}
+                handleProfileChange={handleProfileChange}
+                handleSaveProfile={handleSaveProfile}
+            />
+
+
             <TabPanel value={value} index="two">
                 <Box sx={{ p: 2 }}>
                     <Button variant="contained" color="secondary">
