@@ -8,7 +8,7 @@ import axios from "../../API/axios";
 //import reportImg from '../../Img/report.jpg';
 import PolygonDrawer from "../../components/Polygon";
 
-const FAQ = () => {
+const Camerafeed = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -56,4 +56,4 @@ const FAQ = () => {
   );
 };
 
-export default FAQ;
+export default Camerafeed;

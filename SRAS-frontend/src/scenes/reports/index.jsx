@@ -1,14 +1,11 @@
 import { Box, Button, useTheme } from "@mui/material";
-import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import React, { useRef } from 'react';
 // import './Reports.css';
-import { UilFileDownloadAlt } from '@iconscout/react-unicons';
 import reportImg from '../../Img/report.jpg';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf'; // Use destructuring to import jsPDF
-
 
 const Reports = () => {
     const theme = useTheme();
@@ -30,16 +27,16 @@ const Reports = () => {
         });
     };
     return (
-        <Box m="20px">
+        <Box sx={{ p: 3 }}>
             
             <Button
                 className="download-btn" onClick={handleDownload}
                 sx={{
-                    backgroundColor: colors.blueAccent[700],
+                    backgroundColor: colors.redAccent[500],
                     color: colors.grey[100],
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    padding: "10px 20px",
+                    // fontSize: "14px",
+                    // fontWeight: "bold",
+                    padding: "10px 10px",
                     marginBottom: "15px",
                 }}
             >
@@ -61,8 +58,6 @@ const Reports = () => {
                 />
 
             </Box> */}
-            <Box>
-            </Box>
         </Box>
     );
 };
