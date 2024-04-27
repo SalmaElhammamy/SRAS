@@ -6,7 +6,8 @@
     "build-react": "cd SRAS-frontend && npm run build",
     "start-producer": "python SRAS-camera-access/multiple_producer.py",
     "start-consumer": "python SRAS-camera-access/flask_consumer.py",
-    "start-gateway": "cd SRAS-gateway && npm run dev"
+    "start-gateway": "cd SRAS-gateway && npm run dev",
+    "start-mail-server": "cd SRAS-mail-server && npm run dev"
   },
   "dependencies": {
     "cors": "^2.8.5",

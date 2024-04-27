@@ -6,7 +6,7 @@ const router = Router();
 router.get("/routes", async (req, res) => {
   try {
     const response = await axios.get(
-      `${process.env.VIDEO_SERVICE_URL}/video_feed/routes`
+      `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/routes`
     );
     res.json(
       Object.entries(response.data).map(([cameraName, videoURL]) => ({
@@ -25,7 +25,9 @@ router.get("/routes", async (req, res) => {
 router.get("/:uuid", async (req, res) => {
   const uuid = req.params.uuid;
 
-  res.redirect(`${process.env.VIDEO_SERVICE_URL}/video_feed/${uuid}`);
+  res.redirect(
+    `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/${uuid}`
+  );
 });
 
 module.exports = router;

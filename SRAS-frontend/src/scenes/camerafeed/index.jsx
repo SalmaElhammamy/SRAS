@@ -4,7 +4,6 @@ import { tokens } from "../../theme";
 import "./camerafeed.css";
 import Cards from "../../components/Cards/Cards";
 import React, { useEffect, useState } from "react";
-import axios from "../../API/axios";
 //import reportImg from '../../Img/report.jpg';
 import PolygonDrawer from "../../components/Polygon";
 
@@ -24,17 +23,17 @@ const Camerafeed = () => {
   //   })();
   // }, []);
 
-  const createProduct = async () => {
-    try {
-      const response = await axios.post("/test/products", {
-        id: 90,
-        name: "product 4",
-        price: 400,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const createProduct = async () => {
+  //   try {
+  //     const response = await axios.post("/test/products", {
+  //       id: 90,
+  //       name: "product 4",
+  //       price: 400,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const cards = [
     { title: "Camera One", img: "/assets/img1.jpg" },

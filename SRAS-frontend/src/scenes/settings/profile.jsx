@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Button, TextField } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import axios from "axios";
-
+import { sendEmail as sendEmailService } from "../../services/settingsServices";
+import { toast } from "react-toastify";
 const ProfileTabPanel = ({
   value,
   index,
@@ -10,19 +10,18 @@ const ProfileTabPanel = ({
   handleProfileChange,
   handleSaveProfile,
 }) => {
-  const sendEmail = () => {
+  const sendEmail = async () => {
     const { email } = profile;
-    axios
-      .post("http://localhost:5000/send-email", {
-        email,
-        subject: "SRAS",
-        message: "Hellooooo",
-      })
+    sendEmailService({
+      email,
+      subject: "SRAS",
+      body: "Test",
+    })
       .then((response) => {
-        console.log("Email sent successfully");
+        toast.success("Email sent successfully");
       })
       .catch((error) => {
-        console.error("Error sending email:", error);
+        toast.error("Failed to send email");
       });
   };
 

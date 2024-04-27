@@ -13,42 +13,40 @@ dotenv.config({ path: envFilePath });
 
 const port = process.env.EMAIL_SERVICE_PORT;
 
-function sendEmail({ email, subject, message }) {
-  return new Promise((resolve, reject) => {
-    var transporter = nodemailer.createTransport({
-      host: process.env.SMTP_SERVER,
-      port: process.env.SMTP_PORT,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_SERVER,
+  port: process.env.SMTP_PORT,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
+const sendEmail = ({ email, subject, body }) => {
+  return new Promise((resolve, reject) => {
     const mail_configs = {
       from: process.env.SMTP_SERVER,
       to: email,
       subject: subject,
-      html: `
-      <p>${message}</p>
-      `,
+      html: body,
     };
-    transporter.sendMail(mail_configs, function (error, info) {
+    transporter.sendMail(mail_configs, (error, info) => {
       if (error) {
-        console.log(error);
-        return reject({ message: `An error has occurred` });
+        return reject({ message: "An error has occurred" });
       }
       return resolve({ message: "Email sent successfully" });
     });
   });
-}
+};
 
+//TODO: remove this endpoint, testing purposes only
 app.post("/send-email", (req, res) => {
-  const { email, subject, message } = req.body;
-  sendEmail({ email, subject, message })
+  const { email, subject, body } = req.body;
+  sendEmail({ email, subject, body })
     .then((response) => res.send(response.message))
     .catch((error) => res.status(500).send(error.message));
 });
 
 app.listen(port, () => {
-  console.log(`nodemailerProject is listening at http://localhost:${port}`);
+  console.log(`Node mailer is running on port ${port}`);
 });
