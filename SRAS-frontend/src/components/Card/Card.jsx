@@ -1,18 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Card.css";
 import { FaTimes } from "react-icons/fa";
 import PolygonDrawer from "../Polygon";
 
-const images = [
-  "/assets/img1.jpg",
-  "/assets/img2.jpg",
-  "/assets/img3.jpg",
-  "/assets/img4.jpg",
-  "/assets/img5.jpg",
-  "/assets/img6.jpg",
-];
-
-const Card = ({ title, imageIndex }) => {
+const Card = ({ cameraName, videoURL, imagePreview, isSetting }) => {
   const [expanded, setExpanded] = useState(false);
 
   const toggleExpanded = () => {
@@ -20,32 +11,6 @@ const Card = ({ title, imageIndex }) => {
   };
   const width = 1000;
   const height = 600;
-  const existingCoordinates = [
-    {
-      x: 328,
-      y: 71,
-    },
-    {
-      x: 58,
-      y: 63,
-    },
-    {
-      x: 61,
-      y: 509,
-    },
-    {
-      x: 669,
-      y: 78,
-    },
-    {
-      x: 669,
-      y: 78,
-    },
-    {
-      x: 328,
-      y: 71,
-    },
-  ];
 
   return (
     <>
@@ -54,32 +19,42 @@ const Card = ({ title, imageIndex }) => {
           className={`Card ${expanded ? "ExpandedCard" : ""}`}
           onClick={toggleExpanded}
         >
-          <img src={images[imageIndex]} alt={title} className="expanded-img" />
-          <div className="title">{title}</div>
+          <img src={imagePreview} alt={cameraName} className="expanded-img" />
+          <div className="title">{cameraName}</div>
         </div>
       ) : (
         <div className="ExpandedCard">
           <div className="close-icon">
             <FaTimes
               onClick={() => {
-                console.log("hi");
                 toggleExpanded();
               }}
             />
           </div>
 
-          <PolygonDrawer
-            height={height}
-            width={width}
-            existingCoordinates={existingCoordinates}
-            onClick={setExpanded}
-          />
+          {isSetting ? (
+            <PolygonDrawer
+              height={height}
+              width={width}
+              onClick={setExpanded}
+            />
+          ) : (
+            <img
+              src={videoURL}
+              alt={cameraName}
+              className="expanded-img"
+              style={{
+                width: "1000px",
+                height: "600px",
+              }}
+            />
+          )}
           <div
             style={{
               width: "100%",
             }}
           >
-            <div className="title">{title}</div>
+            <div className="title">{cameraName}</div>
           </div>
         </div>
       )}

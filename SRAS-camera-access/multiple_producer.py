@@ -11,6 +11,7 @@ import sys
 class Config:
     broker_url = 'amqp://guest:guest@localhost:5672//'
     camera_drivers = ['0', '1']
+    first_run = [True for _ in camera_drivers]
 
 
 connection = Connection(Config.broker_url)
@@ -48,12 +49,19 @@ class CameraProducer:
         capture = cv2.VideoCapture(int(self.driver))
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
+        if Config.first_run[int(self.driver)]:
+            ret, frame = capture.read()
+            frame = cv2.resize(frame, (1000, 600))
+            if ret is True:
+                cv2.imwrite(f"Images/preview-{self.driver}.jpg", frame)
+
+            Config.first_run[int(self.driver)] = False
+
         while self.running:
             start_time = time.time()
             ret, frame = capture.read()
             if ret is True:
-                frame = cv2.resize(frame, None, fx=0.6, fy=0.6)
-
+                frame = cv2.resize(frame, (1000, 600))
                 encoded_frame = cv2.imencode('.jpg', frame, encode_param)[1]
                 self.producer.publish(encoded_frame.tobytes())
 

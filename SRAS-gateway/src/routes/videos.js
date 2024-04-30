@@ -9,11 +9,11 @@ router.get("/routes", async (req, res) => {
       `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/routes`
     );
     res.json(
-      Object.entries(response.data).map(([cameraName, videoURL]) => ({
-        cameraName,
-        videoURL: `${process.env.GATEWAY_URL}:${
-          process.env.GATEWAY_PORT
-        }/video/${videoURL.split("/")[2]}`,
+      Object.entries(response.data).map(([cameraId, videoURL]) => ({
+        cameraId,
+        videoURL: `${process.env.URL}:${
+          process.env.VIDEO_SERVICE_PORT
+        }/video_feed/${videoURL.split("/")[2]}`,
       }))
     );
   } catch (error) {
@@ -22,12 +22,21 @@ router.get("/routes", async (req, res) => {
   }
 });
 
-router.get("/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
-
-  res.redirect(
-    `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/${uuid}`
-  );
+router.get("/preview", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/preview`
+    );
+    res.json(
+      response.data.map((item) => ({
+        ...item,
+        imageURL: `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}${item.imageURL}`,
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

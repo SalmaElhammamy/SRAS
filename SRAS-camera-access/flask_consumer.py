@@ -4,14 +4,15 @@ import sys
 from kombu import Connection, Exchange, Queue
 from kombu.mixins import ConsumerMixin
 import threading
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, url_for
 import uuid
+import os
 
 import torch
 from ultralytics import YOLO
 import supervision as sv
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='Images')
 
 
 class Config:
@@ -22,15 +23,15 @@ class Config:
     models = {driver: None for driver in camera_drivers}
 
 
-for driver in Config.camera_drivers:
-    Config.models[driver] = YOLO('yolov8n.pt')
-    if torch.cuda.is_available():
-        print(f"Model for {driver} is using GPU")
-        Config.models[driver].to('cuda')
-    else:
-        print(f"Model for {driver} is using CPU")
+# for driver in Config.camera_drivers:
+#     Config.models[driver] = YOLO('yolov8n.pt')
+#     if torch.cuda.is_available():
+#         print(f"Model for {driver} is using GPU")
+#         Config.models[driver].to('cuda')
+#     else:
+#         print(f"Model for {driver} is using CPU")
 
-bounding_box_annotator = sv.BoundingBoxAnnotator()
+# bounding_box_annotator = sv.BoundingBoxAnnotator()
 
 
 class Worker(ConsumerMixin):
@@ -50,15 +51,15 @@ class Worker(ConsumerMixin):
         np_array = np_array.reshape((size, 1))
         image = cv2.imdecode(np_array, 1)
 
-        result = Config.models[self.driver](
-            source=image,
-            verbose=False
-        )[0]
+        # result = Config.models[self.driver](
+        #     source=image,
+        #     verbose=False
+        # )[0]
 
-        detections = sv.Detections.from_ultralytics(result)
-        annotated_frame = bounding_box_annotator.annotate(image, detections)
+        # detections = sv.Detections.from_ultralytics(result)
+        # annotated_frame = bounding_box_annotator.annotate(image, detections)
 
-        _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
+        _, jpeg_frame = cv2.imencode('.jpg', image)
 
         Config.frames[self.driver] = jpeg_frame.tobytes()
 
@@ -76,6 +77,40 @@ class Consumer:
         with Connection(Config.broker_url) as connection:
             worker = Worker(connection, self.queue, self.driver)
             worker.run()
+
+
+@app.route('/preview')
+def preview():
+    try:
+
+        image_lists = []
+        os.chdir('SRAS-camera-access')
+
+        for camera_driver in Config.camera_drivers:
+            file_name = f'preview-{camera_driver}.jpg'
+            image_path = os.path.join('Images', file_name)
+            if os.path.exists(image_path):
+                image = cv2.imread(image_path)
+                height, width, _ = image.shape
+
+                image_url = url_for('static', filename=file_name)
+
+                image_lists.append({
+                    "cameraId": camera_driver,
+                    "imageURL": image_url,
+                    "height": height,
+                    "width": width
+                })
+            else:
+                continue
+
+        return jsonify(image_lists)
+    except Exception as e:
+        print(e)
+        return "An error occurred"
+
+    finally:
+        os.chdir('..')
 
 
 @app.route('/video_feed/routes')
@@ -104,4 +139,4 @@ if __name__ == '__main__':
     for consumer in consumers:
         threading.Thread(target=consumer.consume).start()
 
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
