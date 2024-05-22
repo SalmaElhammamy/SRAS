@@ -32,15 +32,10 @@ const CustomButton = ({ text, onClick, sx }) => {
 export default function PolygonDrawer(props) {
   const height = props.height;
   const width = props.width;
-  const existingCoordinates = props.existingCoordinates;
   const image = props.image;
   const onClick = props.onClick;
 
-  const navigate = useNavigate();
-
-  const [mouseClicked, setMouseClicked] = useState(
-    !(existingCoordinates && existingCoordinates.length > 0)
-  );
+  const [mouseClicked, setMouseClicked] = useState(false);
 
   const [globalDisableButton, setGlobalDisableButton] = useState(true);
 
@@ -198,7 +193,7 @@ export default function PolygonDrawer(props) {
               : "none",
 
             position: "relative",
-            backgroundImage: `url(${cameraImg})`,
+            backgroundImage: `url(${image})`,
           }}
         >
           {polygons.map(

@@ -16,10 +16,12 @@ app.use("/API", mainRouter);
 const videoRoutes = require("./routes/videos");
 const emailRoutes = require("./routes/mails");
 const testRoutes = require("./routes/testRoutes");
+const settinsRoutes = require("./routes/settings");
 
 mainRouter.use("/video", videoRoutes);
 mainRouter.use("/test", testRoutes);
 mainRouter.use("/email", emailRoutes);
+mainRouter.use("/settings", settinsRoutes);
 
 const port = process.env.GATEWAY_PORT;
 
