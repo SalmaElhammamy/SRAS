@@ -193,7 +193,7 @@ export default function PolygonDrawer(props) {
               : "none",
 
             position: "relative",
-            backgroundImage: `url(${reportImg})`,
+            backgroundImage: `url(${image})`,
           }}
         >
           {polygons.map(

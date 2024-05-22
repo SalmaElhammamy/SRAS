@@ -4,12 +4,16 @@ import React, { useState } from "react";
 import "../camerafeed/camerafeed.css";
 import Cards from "../../components/Cards/Cards";
 import ProfileTabPanel from "./profile";
+import { useEffect } from "react";
+import { getRoutes, getPreview } from "../../services/liveFeedServices";
 
 const Settings = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [value, setValue] = useState("one");
   const [profile, setProfile] = useState({ name: "", email: "" });
+
+  const [cards, setCards] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -23,14 +27,24 @@ const Settings = () => {
     console.log("Profile saved:", profile);
   };
 
-  const cards = [
-    { title: "Camera One", img: "/assets/img1.jpg" },
-    { title: "Camera Two", img: "/assets/img2.jpg" },
-    { title: "Camera Three", img: "/assets/img3.jpg" },
-    { title: "Camera Four", img: "/assets/img4.jpg" },
-    { title: "Camera Five", img: "/assets/img5.jpg" },
-    { title: "Camera Six", img: "/assets/img6.jpg" },
-  ];
+  useEffect(() => {
+    (async () => {
+      const [routes, preview] = await Promise.all([getRoutes(), getPreview()]);
+      setCards(
+        routes.data.map((route) => {
+          return {
+            cameraName: route.cameraId,
+            videoURL: route.videoFeed,
+            imagePreview: preview.data.find(
+              (preview) => preview.cameraId === route.cameraId
+            ).imageURL,
+          };
+        })
+      );
+    })();
+  }, []);
+
+  console.log(cards);
 
   return (
     <Box sx={{ width: "100%" }}>
