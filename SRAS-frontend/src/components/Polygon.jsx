@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import reportImg from "../Img/report.jpg";
+import cameraImg from "../Img/camera.jpg";
 
 const CustomButton = ({ text, onClick, sx }) => {
   return (
