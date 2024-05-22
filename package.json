@@ -1,11 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": [
-    "SRAS-gateway",
-    "SRAS-mail-server",
-    "SRAS-frontend"
-  ],
   "scripts": {
     "dev": "cd SRAS-frontend && npm run dev",
     "build-react": "cd SRAS-frontend && npm run build",

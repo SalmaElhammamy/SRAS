@@ -2,7 +2,7 @@ import React from "react";
 import "./Cards.css";
 import Card from "../Card/Card";
 
-const Cards = ({ cards, isSetting }) => {
+const Cards = ({ cards, isSetting, setReloadFlag }) => {
   return (
     <div className="CardContainer">
       {cards.map((card, index) => (

@@ -114,6 +114,13 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Predictions"
+              to="/camerafeedinference"
+              icon={<VideocamOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Reports"
               to="/reports"
               icon={<ArticleOutlinedIcon />}

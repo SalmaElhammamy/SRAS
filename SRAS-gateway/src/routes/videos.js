@@ -9,12 +9,13 @@ router.get("/routes", async (req, res) => {
       `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/routes`
     );
     res.json(
-      Object.entries(response.data).map(([cameraId, videoURL]) => ({
-        cameraId,
-        videoURL: `${process.env.URL}:${
-          process.env.VIDEO_SERVICE_PORT
-        }/video_feed/${videoURL.split("/")[2]}`,
-      }))
+      Object.entries(response.data).map(
+        ([cameraId, videoFeed, videoFeedWithInference]) => ({
+          cameraId,
+          videoFeed: `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed/${videoFeed}`,
+          videoFeedWithInference: `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/video_feed_inference/${videoFeed}`,
+        })
+      )
     );
   } catch (error) {
     console.error(error);

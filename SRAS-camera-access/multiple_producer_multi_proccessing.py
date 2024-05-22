@@ -66,7 +66,7 @@ class CameraProducer(multiprocessing.Process):
                     print(f"Error publishing message: {e}")
 
                 processing_time = time.time() - start_time
-                sleep_time = max(0, (1/60) - processing_time)
+                sleep_time = max(0, (1/15) - processing_time)
                 time.sleep(sleep_time)
             else:
                 capture.set(cv2.CAP_PROP_POS_FRAMES, 0)

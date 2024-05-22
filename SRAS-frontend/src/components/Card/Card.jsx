@@ -28,6 +28,7 @@ const Card = ({ cameraName, videoURL, imagePreview, isSetting }) => {
             <FaTimes
               onClick={() => {
                 toggleExpanded();
+                window.location.reload();
               }}
             />
           </div>

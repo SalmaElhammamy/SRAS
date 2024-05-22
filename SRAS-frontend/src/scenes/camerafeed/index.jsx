@@ -6,7 +6,7 @@ import Cards from "../../components/Cards/Cards";
 import React, { useEffect, useState } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
 
-const Camerafeed = () => {
+const Camerafeed = ({ withInference = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [cards, setCards] = useState([]);
@@ -18,7 +18,9 @@ const Camerafeed = () => {
         routes.data.map((route) => {
           return {
             cameraName: route.cameraId,
-            videoURL: route.videoURL,
+            videoURL: withInference
+              ? route.videoFeedWithInference
+              : route.videoFeed,
             imagePreview: preview.data.find(
               (preview) => preview.cameraId === route.cameraId
             ).imageURL,
@@ -26,7 +28,7 @@ const Camerafeed = () => {
         })
       );
     })();
-  }, []);
+  }, [withInference]);
 
   return (
     <Box>

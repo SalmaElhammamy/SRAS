@@ -6,8 +6,8 @@ import Dashboard from "./scenes/dashboard";
 import Camera from "./scenes/camerafeed";
 import Reports from "./scenes/reports";
 // import Invoices from "./scenes/invoices";
-import Bar from "./scenes/bar";
 // import Form from "./scenes/form";
+import Bar from "./scenes/bar";
 import Line from "./scenes/line";
 import Pie from "./scenes/pie";
 import Settings from "./scenes/settings";
@@ -32,11 +32,14 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/camerafeed" element={<Camera />} />
+              <Route
+                path="/camerafeedinference"
+                element={<Camera withInference={true} />}
+              />
               <Route path="/bar" element={<Bar />} />
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/settings" element={<Settings />} />
-
             </Routes>
           </main>
         </div>
