@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "cd SRAS-frontend && npm run dev",
     "build-react": "cd SRAS-frontend && npm run build",
-    "start-producer": "python SRAS-camera-access/multiple_producer_multi_proccessing.py",
-    "start-consumer": "python SRAS-camera-access/flask_consumer_multi_threading.py",
+    "start-producer": "python SRAS-live-feed/multiple_producer_multi_proccessing.py",
+    "start-consumer": "python SRAS-live-feed/flask_consumer_multi_threading.py",
     "start-gateway": "cd SRAS-gateway && npm run dev",
     "start-mail-server": "cd SRAS-mail-server && npm run dev",
     "start-backend": "npm-run-all --parallel start-gateway start-mail-server",
