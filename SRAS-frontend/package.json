@@ -1,40 +1,57 @@
 {
-  "name": "material-tailwind-dashboard-react",
+  "name": "react-admin",
+  "version": "0.1.0",
   "private": true,
-  "version": "2.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
   "dependencies": {
-    "@heroicons/react": "2.0.18",
-    "@material-tailwind/react": "2.1.4",
-    "apexcharts": "3.44.0",
-    "axios": "^1.6.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6",
-    "mqtt": "^5.3.3",
-    "path": "^0.12.7",
-    "prop-types": "15.8.1",
-    "react": "18.2.0",
-    "react-apexcharts": "1.4.1",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.12.0",
-    "react-router-dom": "6.17.0",
-    "react-toastify": "^9.1.3"
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@iconscout/react-unicons": "^2.0.2",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "@nivo/bar": "^0.85.1",
+    "@nivo/core": "^0.85.1",
+    "@nivo/line": "^0.85.1",
+    "@nivo/pie": "^0.85.1",
+    "axios": "^1.6.8",
+    "chart.js": "^3.9.1",
+    "formik": "^2.2.9",
+    "framer-motion": "^11.0.28",
+    "jspdf": "^2.5.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^4.3.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.1.0",
+    "react-polygon-drawer": "^0.1.4",
+    "react-pro-sidebar": "^0.7.1",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
   },
-  "devDependencies": {
-    "@types/react": "18.2.31",
-    "@types/react-dom": "18.2.14",
-    "@vitejs/plugin-react": "4.1.0",
-    "autoprefixer": "10.4.16",
-    "postcss": "8.4.31",
-    "prettier": "3.0.3",
-    "prettier-plugin-tailwindcss": "0.5.6",
-    "tailwindcss": "^3.3.4",
-    "vite": "^4.5.0"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

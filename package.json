@@ -4,12 +4,19 @@
   "scripts": {
     "dev": "cd SRAS-frontend && npm run dev",
     "build-react": "cd SRAS-frontend && npm run build",
-    "start-proxy": "node proxy.js"
+    "start-producer": "python SRAS-live-feed/multiple_producer_multi_proccessing.py",
+    "start-consumer": "python SRAS-live-feed/flask_consumer_multi_threading.py",
+    "start-gateway": "cd SRAS-gateway && npm run dev",
+    "start-mail-server": "cd SRAS-mail-server && npm run dev",
+    "start-backend": "npm-run-all --parallel start-gateway start-mail-server",
+    "start-front-end": "cd SRAS-frontend && npm start"
   },
   "dependencies": {
-    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.18.3",
-    "http-proxy-middleware": "^2.0.6"
+    "http-proxy-middleware": "^2.0.6",
+    "react-polygon-drawer": "^0.1.4"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5"
