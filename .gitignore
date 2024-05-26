@@ -33,3 +33,5 @@ dist-ssr
 /SRAS-mock-server/node_modules
 /SRAS-gateway/node_modules
 /SRAS-mail-server/node_modules
+/SRAS-db/node_modules
+/SRAS-db/package-lock.json
