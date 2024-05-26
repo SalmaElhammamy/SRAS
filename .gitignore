@@ -26,6 +26,7 @@ dist-ssr
 *.sln
 *.sw?
 *yolo
+yolo*
 /SRAS-frontend/node_modules
 /SRAS-live-feed/venv
 /SRAS-live-feed/yolov8*
