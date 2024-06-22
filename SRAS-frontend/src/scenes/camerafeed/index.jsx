@@ -21,7 +21,7 @@ const Camerafeed = ({ withInference = false }) => {
         setCards(
           routes.data.map((route) => {
             return {
-              cameraName: route.cameraId,
+              cameraName: route.cameraName,
               videoURL: withInference
                 ? route.videoFeedWithInference
                 : route.videoFeed,
