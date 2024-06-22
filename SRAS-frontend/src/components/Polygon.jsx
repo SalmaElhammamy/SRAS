@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ReactPolygonDrawer from "react-polygon-drawer";
 import {
   Grid,
@@ -11,9 +10,10 @@ import {
   Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import cameraImg from "../Img/camera.jpg";
+import { toast } from "react-toastify";
+import { saveCameraCoordinates } from "../services/settingsServices";
 
-const CustomButton = ({ text, onClick, sx }) => {
+const CustomButton = ({ text, onClick, sx, color }) => {
   return (
     <Button
       variant="contained"
@@ -23,6 +23,7 @@ const CustomButton = ({ text, onClick, sx }) => {
         ...sx,
       }}
       onClick={onClick}
+      color={color}
     >
       <Typography variant="h4">{text}</Typography>
     </Button>
@@ -34,85 +35,37 @@ export default function PolygonDrawer(props) {
   const width = props.width;
   const image = props.image;
   const onClick = props.onClick;
+  const incomingPolygons = props.polygons;
+  const _id = props._id;
 
   const [mouseClicked, setMouseClicked] = useState(false);
 
   const [globalDisableButton, setGlobalDisableButton] = useState(true);
 
   const [polygons, setPolygons] = useState([]);
+  const [isAllActive, setIsAllActive] = useState(true);
 
   useEffect(() => {
-    setPolygons([
-      {
-        id: 1,
-        isActive: false,
-        coordinates: [
-          {
-            x: 155,
-            y: 185,
-          },
-          {
-            x: 617,
-            y: 177,
-          },
-          {
-            x: 600,
-            y: 421,
-          },
-          {
-            x: 182,
-            y: 432,
-          },
-          {
-            x: 155,
-            y: 185,
-          },
-        ],
-      },
-      {
-        id: 2,
-        isActive: false,
-        coordinates: [
-          {
-            x: 328,
-            y: 71,
-          },
-          {
-            x: 58,
-            y: 63,
-          },
-          {
-            x: 61,
-            y: 509,
-          },
-          {
-            x: 669,
-            y: 78,
-          },
-          {
-            x: 669,
-            y: 78,
-          },
-          {
-            x: 328,
-            y: 71,
-          },
-        ],
-      },
-    ]);
+    setPolygons(incomingPolygons);
+    // eslint-disable-next-line
   }, []);
 
+  const DisableAllPolygons = () => {
+    setPolygons(
+      polygons.map((polygon) => {
+        polygon.isActive = false;
+        return polygon;
+      })
+    );
+  };
   const SetActivePolygon = (id) => {
     setMouseClicked(false);
     if (id === -1) {
       setGlobalDisableButton(true);
-      setPolygons(
-        polygons.map((polygon) => {
-          polygon.isActive = true;
-          return polygon;
-        })
-      );
+      setIsAllActive(true);
+      DisableAllPolygons();
     } else {
+      setIsAllActive(false);
       setGlobalDisableButton(false);
       setPolygons(
         polygons.map((polygon) => {
@@ -128,11 +81,17 @@ export default function PolygonDrawer(props) {
   };
 
   const AddNewPolygon = () => {
+    if (polygons.length === 3) {
+      toast.warning("You can only add 3 areas");
+      return;
+    }
+    DisableAllPolygons();
+    setIsAllActive(false);
     setPolygons([
       ...polygons,
       {
         id: Date.now(),
-        isActive: false,
+        isActive: true,
         coordinates: [],
       },
     ]);
@@ -151,13 +110,20 @@ export default function PolygonDrawer(props) {
 
   const DeletePolygon = (id) => {
     if (polygons.length === 1) {
+      toast.warning("You must have at least 1 area");
       return;
     }
+    SetActivePolygon(-1);
     setPolygons(polygons.filter((polygon) => polygon.id !== id));
   };
 
-  const SavePolygons = () => {
-    console.log(polygons);
+  const SavePolygons = async () => {
+    try {
+      await saveCameraCoordinates(polygons, _id);
+      toast.success("Areas saved successfully");
+    } catch (error) {
+      toast.error("Failed to save areas");
+    }
   };
 
   if (polygons.length === 0) return null;
@@ -194,11 +160,13 @@ export default function PolygonDrawer(props) {
 
             position: "relative",
             backgroundImage: `url(${image})`,
+            borderRadius: "10px",
+            boxShadow: "0 0 10px 0 rgba(0, 0, 0, 1)",
           }}
         >
           {polygons.map(
             (polygon) =>
-              polygon.isActive && (
+              (polygon.isActive || isAllActive) && (
                 <ReactPolygonDrawer
                   key={polygon.id}
                   width={width}
@@ -232,6 +200,7 @@ export default function PolygonDrawer(props) {
                 sx={{
                   width: "95%",
                 }}
+                color={polygon.isActive ? "secondary" : "primary"}
               />
               <Tooltip title="Delete">
                 <IconButton
@@ -258,6 +227,7 @@ export default function PolygonDrawer(props) {
             onClick={() => {
               SetActivePolygon(-1);
             }}
+            color={isAllActive ? "secondary" : "primary"}
           />
           <Stack
             direction="row"

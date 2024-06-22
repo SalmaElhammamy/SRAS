@@ -13,6 +13,19 @@ import torch
 from ultralytics import YOLO
 import supervision as sv
 
+from utils.general import find_in_list, load_zones_config
+from utils.timers import FPSBasedTimer
+
+import requests
+import json
+
+from dotenv import load_dotenv
+env_path = '../.env'
+load_dotenv(env_path)
+
+URL = os.getenv('URL')
+DB_SERVER_PORT = os.getenv('DB_SERVER_PORT')
+
 app = Flask(__name__, static_folder='Images')
 
 
@@ -21,7 +34,30 @@ class WorkerType(Enum):
     WITH_INFERENCE = 2
 
 
-bounding_box_annotator = sv.BoundingBoxAnnotator()
+tracker = sv.ByteTrack(minimum_matching_threshold=0.5)
+
+zone_configuration_path = './config.json'
+
+
+COLORS = sv.ColorPalette.from_hex(["#E6194B", "#3CB44B", "#FFE119", "#3C76D1"])
+COLOR_ANNOTATOR = sv.ColorAnnotator(color=COLORS)
+LABEL_ANNOTATOR = sv.LabelAnnotator(
+    color=COLORS, text_color=sv.Color.from_hex("#000000")
+)
+
+
+def get_coordinates(driverId):
+    try:
+        response = requests.get(
+            f'{URL}:{DB_SERVER_PORT}/camera/coordinates/{driverId}')
+        response = response.json()
+
+        nested_list = json.loads(response['coordinates'])
+        array_list = [np.array(sublist) for sublist in nested_list]
+        return array_list
+    except Exception as e:
+        print(e)
+        return None
 
 
 class Config:
@@ -31,6 +67,7 @@ class Config:
     frames = {driver: None for driver in camera_drivers}
     inference_frames = {driver: None for driver in camera_drivers}
     models = {driver: None for driver in camera_drivers}
+    polygons = {driver: get_coordinates(driver) for driver in camera_drivers}
 
 
 class Worker(ConsumerMixin):
@@ -61,26 +98,69 @@ class WorkerWithInference(Worker):
     def __init__(self, connection, queue, driver):
         super().__init__(connection, queue, driver)
         self.model = YOLO('yolov8n.pt')
+        self.polygons = Config.polygons[driver]
         if torch.cuda.is_available():
             print(f"Model for {driver} is using GPU")
             self.model.to('cuda')
         else:
             print(f"Model for {driver} is using CPU")
 
+        self.zones = [
+            sv.PolygonZone(
+                polygon=polygon,
+                triggering_anchors=(sv.Position.CENTER,),
+            )
+            for polygon in self.polygons
+        ]
+
+        self.timers = [FPSBasedTimer(15) for _ in self.zones]
+
     def on_message(self, body, message):
         size = sys.getsizeof(body) - 33
         np_array = np.frombuffer(body, dtype=np.uint8)
         np_array = np_array.reshape((size, 1))
-        image = cv2.imdecode(np_array, 1)
+        frame = cv2.imdecode(np_array, 1)
 
-        result = self.model(
-            source=image,
+        results = self.model(
+            source=frame,
             verbose=False,
             classes=[0]
         )[0]
 
-        detections = sv.Detections.from_ultralytics(result)
-        annotated_frame = bounding_box_annotator.annotate(image, detections)
+        detections = sv.Detections.from_ultralytics(results)
+        detections = detections[find_in_list(detections.class_id, [0])]
+        detections = tracker.update_with_detections(detections)
+
+        annotated_frame = frame.copy()
+        for idx, zone in enumerate(self.zones):
+            annotated_frame = sv.draw_polygon(
+                scene=annotated_frame, polygon=zone.polygon, color=COLORS.by_idx(
+                    idx)
+            )
+
+            # detections_in_zone = detections[zone.trigger(detections)]
+
+            # if isinstance(detections_in_zone.tracker_id, np.ndarray) and detections_in_zone.tracker_id.shape != (0, ):
+
+            #     time_in_zone = self.timers[idx].tick(detections_in_zone)
+            #     custom_color_lookup = np.full(
+            #         detections_in_zone.class_id.shape, idx)
+
+            #     annotated_frame = COLOR_ANNOTATOR.annotate(
+            #         scene=annotated_frame,
+            #         detections=detections_in_zone,
+            #         custom_color_lookup=custom_color_lookup,
+            #     )
+            #     labels = [
+            #         f"#{tracker_id} {int(time // 60):02d}:{int(time % 60):02d}"
+            #         for tracker_id, time in zip(detections_in_zone.tracker_id, time_in_zone)
+            #     ]
+            #     annotated_frame = LABEL_ANNOTATOR.annotate(
+            #         scene=annotated_frame,
+            #         detections=detections_in_zone,
+            #         labels=labels,
+            #         custom_color_lookup=custom_color_lookup,
+            #     )
 
         _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
 

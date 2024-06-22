@@ -1,19 +1,19 @@
-import { Box, Button, useTheme, Tabs, Tab, TextField } from "@mui/material";
-import { tokens } from "../../theme";
+import { Box, Tabs, Tab } from "@mui/material";
 import React, { useState } from "react";
 import "../camerafeed/camerafeed.css";
 import Cards from "../../components/Cards/Cards";
 import ProfileTabPanel from "./profile";
 import { useEffect } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
+import { toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Settings = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [value, setValue] = useState("one");
   const [profile, setProfile] = useState({ name: "", email: "" });
 
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -29,23 +29,51 @@ const Settings = () => {
 
   useEffect(() => {
     (async () => {
-      const [routes, preview] = await Promise.all([getRoutes(), getPreview()]);
-      setCards(
-        routes.data.map((route) => {
-          return {
-            cameraName: route.cameraId,
-            videoURL: route.videoFeed,
-            imagePreview: preview.data.find(
-              (preview) => preview.cameraId === route.cameraId
-            ).imageURL,
-          };
-        })
-      );
+      try {
+        const [routes, preview] = await Promise.all([
+          getRoutes(),
+          getPreview(),
+        ]);
+        setCards(
+          routes.data.map((route) => {
+            return {
+              _id: route._id,
+              cameraName: route.cameraName,
+              imagePreview: preview.data.find(
+                (preview) => preview.driverId === route.driverId
+              ).imageURL,
+              polygons: JSON.parse(route.coordinates).map(
+                (coordinateList, index) => ({
+                  id: index + 1,
+                  isActive: false,
+                  coordinates: coordinateList.map(([x, y]) => ({ x, y })),
+                })
+              ),
+            };
+          })
+        );
+      } catch (error) {
+        toast.error("Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
-  console.log(cards);
-
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress color="secondary" size={100} />
+      </Box>
+    );
+  }
   return (
     <Box sx={{ width: "100%" }}>
       <Tabs
@@ -55,19 +83,11 @@ const Settings = () => {
         indicatorColor="secondary"
         aria-label="secondary tabs example"
       >
-        <Tab value="one" label="Profile" />
-        <Tab value="two" label="Camera Settings" />
+        <Tab value="one" label="Camera Settings" />
+        <Tab value="two" label="Profile Settings" />
       </Tabs>
 
-      <ProfileTabPanel
-        value={value}
-        index="one"
-        profile={profile}
-        handleProfileChange={handleProfileChange}
-        handleSaveProfile={handleSaveProfile}
-      />
-
-      <TabPanel value={value} index="two">
+      <TabPanel value={value} index="one">
         <Box sx={{ p: 2 }}>
           <Box>
             <Box>
@@ -76,6 +96,14 @@ const Settings = () => {
           </Box>
         </Box>
       </TabPanel>
+
+      <ProfileTabPanel
+        value={value}
+        index="two"
+        profile={profile}
+        handleProfileChange={handleProfileChange}
+        handleSaveProfile={handleSaveProfile}
+      />
     </Box>
   );
 };

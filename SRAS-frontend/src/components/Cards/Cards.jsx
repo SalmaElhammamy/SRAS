@@ -12,6 +12,8 @@ const Cards = ({ cards, isSetting, setReloadFlag }) => {
           videoURL={card.videoURL}
           imagePreview={card.imagePreview}
           isSetting={isSetting}
+          polygons={card.polygons}
+          _id={card._id}
         />
       ))}
     </div>

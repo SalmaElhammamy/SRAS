@@ -30,14 +30,19 @@ export const FetchCamera = async (req, res) => {
 export const UpdateCamera = async (req, res) => {
   try {
     const id = req.params.id;
-
     const cameraExists = await Camera.findOne({ _id: id });
     if (!cameraExists) {
       return res.status(404).json({ message: "Camera not found" });
     }
-    const updatedCamera = await Camera.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updatedCamera = await Camera.findByIdAndUpdate(
+      id,
+      {
+        AreaOfIntrest: req.body.coordinates,
+      },
+      {
+        new: true,
+      }
+    );
     res.status(201).json(updatedCamera);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -54,6 +59,20 @@ export const DeleteCamera = async (req, res) => {
     }
     await Camera.findByIdAndDelete(id);
     res.status(201).json({ message: "Camera deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const GetCameraCoordinateByDriverId = async (req, res) => {
+  try {
+    const { driverId } = req.params;
+
+    const cameraExists = await Camera.findOne({ DriverId: driverId });
+    if (!cameraExists) {
+      return res.status(404).json({ message: "Camera not found" });
+    }
+    res.status(201).json({ coordinates: cameraExists.AreaOfIntrest });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
