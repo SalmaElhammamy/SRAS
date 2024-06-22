@@ -14,6 +14,7 @@ const Settings = () => {
 
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reloadFlag, setReloadFlag] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -58,7 +59,7 @@ const Settings = () => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [reloadFlag]);
 
   if (loading) {
     return (
@@ -91,7 +92,11 @@ const Settings = () => {
         <Box sx={{ p: 2 }}>
           <Box>
             <Box>
-              <Cards cards={cards} isSetting={true} />
+              <Cards
+                cards={cards}
+                isSetting={true}
+                setReloadFlag={setReloadFlag}
+              />
             </Box>
           </Box>
         </Box>

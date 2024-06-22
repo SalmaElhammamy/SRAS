@@ -10,6 +10,7 @@ const Card = ({
   isSetting,
   polygons,
   _id,
+  setReloadFlag,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
@@ -49,6 +50,7 @@ const Card = ({
               key={videoURL}
               polygons={polygons}
               _id={_id}
+              setReloadFlag={setReloadFlag}
             />
           ) : (
             <img

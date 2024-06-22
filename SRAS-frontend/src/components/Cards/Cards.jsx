@@ -14,6 +14,7 @@ const Cards = ({ cards, isSetting, setReloadFlag }) => {
           isSetting={isSetting}
           polygons={card.polygons}
           _id={card._id}
+          setReloadFlag={setReloadFlag}
         />
       ))}
     </div>

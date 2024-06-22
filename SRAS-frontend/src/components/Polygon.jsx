@@ -36,6 +36,7 @@ export default function PolygonDrawer(props) {
   const image = props.image;
   const onClick = props.onClick;
   const incomingPolygons = props.polygons;
+  const setReloadFlag = props.setReloadFlag;
   const _id = props._id;
 
   const [mouseClicked, setMouseClicked] = useState(false);
@@ -121,12 +122,11 @@ export default function PolygonDrawer(props) {
     try {
       await saveCameraCoordinates(polygons, _id);
       toast.success("Areas saved successfully");
+      setReloadFlag((prev) => prev + 1);
     } catch (error) {
       toast.error("Failed to save areas");
     }
   };
-
-  if (polygons.length === 0) return null;
 
   return (
     <Grid
