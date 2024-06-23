@@ -88,6 +88,7 @@ export default function PolygonDrawer(props) {
     }
     DisableAllPolygons();
     setIsAllActive(false);
+    setGlobalDisableButton(false);
     setPolygons([
       ...polygons,
       {

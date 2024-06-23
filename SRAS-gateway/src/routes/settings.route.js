@@ -23,9 +23,13 @@ router.post("/camera-settings/:_id", async (req, res) => {
       { coordinates }
     );
 
+    const test = await axios.get(
+      `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/update-coordinates`
+    );
+
     res.status(200).send();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 });

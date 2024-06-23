@@ -98,12 +98,18 @@ class WorkerWithInference(Worker):
     def __init__(self, connection, queue, driver):
         super().__init__(connection, queue, driver)
         self.model = YOLO('yolov8n.pt')
-        self.polygons = Config.polygons[driver]
+
         if torch.cuda.is_available():
             print(f"Model for {driver} is using GPU")
             self.model.to('cuda')
         else:
             print(f"Model for {driver} is using CPU")
+
+        self.get_coordinates()
+        self.timers = [FPSBasedTimer(15) for _ in self.zones]
+
+    def get_coordinates(self):
+        self.polygons = Config.polygons[self.driver]
 
         self.zones = [
             sv.PolygonZone(
@@ -112,8 +118,6 @@ class WorkerWithInference(Worker):
             )
             for polygon in self.polygons
         ]
-
-        self.timers = [FPSBasedTimer(15) for _ in self.zones]
 
     def on_message(self, body, message):
         size = sys.getsizeof(body) - 33
@@ -180,11 +184,14 @@ class Consumer:
     def consume(self):
         with Connection(Config.broker_url) as connection:
             if self.worker_type == WorkerType.DEFAULT:
-                worker = Worker(connection, self.queue, self.driver)
+                self.worker = Worker(connection, self.queue, self.driver)
             else:
-                worker = WorkerWithInference(
+                self.worker = WorkerWithInference(
                     connection, self.queue, self.driver)
-            worker.run()
+            self.worker.run()
+
+    def update_coordinates(self):
+        self.worker.get_coordinates()
 
 
 @app.route('/preview')
@@ -239,6 +246,15 @@ def video_feed_inference(driver_uuid):
     return Response(generate_frames(driver, worker_type=WorkerType.WITH_INFERENCE), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route('/update-coordinates')
+def update_coordinates():
+    Config.polygons = {driver: get_coordinates(
+        driver) for driver in Config.camera_drivers}
+    for inference_consumer in inference_consumers:
+        inference_consumer.update_coordinates()
+    return "Coordinates updated"
+
+
 def generate_frames(driver, worker_type=WorkerType.DEFAULT):
     while True:
         if worker_type == WorkerType.DEFAULT:
@@ -250,10 +266,11 @@ def generate_frames(driver, worker_type=WorkerType.DEFAULT):
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
+consumers = [Consumer(driver) for driver in Config.camera_drivers]
+inference_consumers = [Consumer(driver, WorkerType.WITH_INFERENCE)
+                       for driver in Config.camera_drivers]
+
 if __name__ == '__main__':
-    consumers = [Consumer(driver) for driver in Config.camera_drivers]
-    inference_consumers = [Consumer(driver, WorkerType.WITH_INFERENCE)
-                           for driver in Config.camera_drivers]
 
     for consumer in consumers:
         threading.Thread(target=consumer.consume).start()
