@@ -8,9 +8,10 @@ import {
 
 const settingsRouter = express.Router();
 
-settingsRouter.post("/", CreateSettings);
+// settingsRouter.post("/", CreateSettings);
+settingsRouter.post("/",createOrUpdateSettings );
 settingsRouter.get("/", FetchSettings);
-settingsRouter.put("/:id", UpdateSettings);
+// settingsRouter.put("/:id", UpdateSettings);
 settingsRouter.delete("/:id", DeleteSettings);
 
 export default settingsRouter;
