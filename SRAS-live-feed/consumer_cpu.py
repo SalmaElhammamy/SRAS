@@ -9,8 +9,53 @@ import uuid
 import os
 from enum import Enum
 
+import supervision as sv
+
+from utils.general import find_in_list, load_zones_config
+from utils.timers import FPSBasedTimer
+
+import requests
+import json
+
+from dotenv import load_dotenv
+env_path = '../.env'
+load_dotenv(env_path)
+
+URL = os.getenv('URL')
+DB_SERVER_PORT = os.getenv('DB_SERVER_PORT')
 
 app = Flask(__name__, static_folder='Images')
+
+
+class WorkerType(Enum):
+    DEFAULT = 1
+    WITH_INFERENCE = 2
+
+
+tracker = sv.ByteTrack(minimum_matching_threshold=0.9)
+
+zone_configuration_path = './config.json'
+
+
+COLORS = sv.ColorPalette.from_hex(["#E6194B", "#3CB44B", "#FFE119", "#3C76D1"])
+COLOR_ANNOTATOR = sv.ColorAnnotator(color=COLORS)
+LABEL_ANNOTATOR = sv.LabelAnnotator(
+    color=COLORS, text_color=sv.Color.from_hex("#000000")
+)
+
+
+def get_coordinates(driverId):
+    try:
+        response = requests.get(
+            f'{URL}:{DB_SERVER_PORT}/camera/coordinates/{driverId}')
+        response = response.json()
+
+        nested_list = json.loads(response['coordinates'])
+        array_list = [np.array(sublist) for sublist in nested_list]
+        return array_list
+    except Exception as e:
+        print(e)
+        return None
 
 
 class Config:
@@ -18,6 +63,9 @@ class Config:
     camera_drivers = ['0', '1']
     routes = {driver: f"{uuid.uuid4()}" for driver in camera_drivers}
     frames = {driver: None for driver in camera_drivers}
+    inference_frames = {driver: None for driver in camera_drivers}
+    models = {driver: None for driver in camera_drivers}
+    polygons = {driver: get_coordinates(driver) for driver in camera_drivers}
 
 
 class Worker(ConsumerMixin):
@@ -44,17 +92,62 @@ class Worker(ConsumerMixin):
         message.ack()
 
 
+class WorkerWithInference(Worker):
+    def __init__(self, connection, queue, driver):
+        super().__init__(connection, queue, driver)
+        self.get_coordinates()
+
+    def get_coordinates(self):
+        self.polygons = Config.polygons[self.driver]
+
+        self.zones = [
+            sv.PolygonZone(
+                polygon=polygon,
+                triggering_anchors=(sv.Position.CENTER,),
+            )
+            for polygon in self.polygons
+        ]
+        self.timers = [FPSBasedTimer(15) for _ in self.zones]
+
+    def on_message(self, body, message):
+        size = sys.getsizeof(body) - 33
+        np_array = np.frombuffer(body, dtype=np.uint8)
+        np_array = np_array.reshape((size, 1))
+        frame = cv2.imdecode(np_array, 1)
+
+        annotated_frame = frame.copy()
+        for idx, zone in enumerate(self.zones):
+            annotated_frame = sv.draw_polygon(
+                scene=annotated_frame, polygon=zone.polygon, color=COLORS.by_idx(
+                    idx)
+            )
+
+        _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
+
+        Config.inference_frames[self.driver] = jpeg_frame.tobytes()
+
+        message.ack()
+
+
 class Consumer:
-    def __init__(self, driver):
+    def __init__(self, driver, worker_type=WorkerType.DEFAULT):
         self.driver = driver
+        self.worker_type = worker_type
         self.exchange = Exchange(driver + '-exchange', type='direct')
         self.queue = Queue(driver + '-queue', self.exchange,
                            routing_key="video")
 
     def consume(self):
         with Connection(Config.broker_url) as connection:
-            worker = Worker(connection, self.queue, self.driver)
-            worker.run()
+            if self.worker_type == WorkerType.DEFAULT:
+                self.worker = Worker(connection, self.queue, self.driver)
+            else:
+                self.worker = WorkerWithInference(
+                    connection, self.queue, self.driver)
+            self.worker.run()
+
+    def update_coordinates(self):
+        self.worker.get_coordinates()
 
 
 @app.route('/preview')
@@ -102,17 +195,43 @@ def video_feed(driver_uuid):
     return Response(generate_frames(driver), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-def generate_frames(driver):
+@app.route('/video_feed_inference/<driver_uuid>')
+def video_feed_inference(driver_uuid):
+    driver = [driver for driver, url in Config.routes.items() if url ==
+              f"{driver_uuid}"][0]
+    return Response(generate_frames(driver, worker_type=WorkerType.WITH_INFERENCE), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/update-coordinates')
+def update_coordinates():
+    Config.polygons = {driver: get_coordinates(
+        driver) for driver in Config.camera_drivers}
+    for inference_consumer in inference_consumers:
+        inference_consumer.update_coordinates()
+    return "Coordinates updated"
+
+
+def generate_frames(driver, worker_type=WorkerType.DEFAULT):
     while True:
-        frame = Config.frames[driver]
+        if worker_type == WorkerType.DEFAULT:
+            frame = Config.frames[driver]
+        else:
+            frame = Config.inference_frames[driver]
         if frame is not None:
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
+consumers = [Consumer(driver) for driver in Config.camera_drivers]
+inference_consumers = [Consumer(driver, WorkerType.WITH_INFERENCE)
+                       for driver in Config.camera_drivers]
+
 if __name__ == '__main__':
-    consumers = [Consumer(driver) for driver in Config.camera_drivers]
+
     for consumer in consumers:
         threading.Thread(target=consumer.consume).start()
+
+    for inference_consumer in inference_consumers:
+        threading.Thread(target=inference_consumer.consume).start()
 
     app.run(host='0.0.0.0', debug=False)
