@@ -121,6 +121,14 @@ export default function PolygonDrawer(props) {
 
   const SavePolygons = async () => {
     try {
+      for (let i = 0; i < polygons.length; i++) {
+        if (polygons[i].coordinates.length === 0) {
+          toast.warning(`Area ${i + 1} has no coordinates`);
+          SetActivePolygon(polygons[i].id);
+          return;
+        }
+      }
+
       await saveCameraCoordinates(polygons, _id);
       toast.success("Areas saved successfully");
       setReloadFlag((prev) => prev + 1);
