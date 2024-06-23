@@ -1,19 +1,19 @@
 import Settings from "../model/settings.model.js";
 
-export const CreateSettings = async (req, res) => {
-  try {
-    const settingsData = new Settings(req.body);
-    const { FullName } = settingsData;
-    const settingsExists = await Settings.findOne({ FullName });
-    if (settingsExists) {
-      return res.status(400).json({ message: "Settings already exist" });
-    }
-    const savedSettings = await settingsData.save();
-    res.status(200).json(savedSettings);
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+// export const CreateSettings = async (req, res) => {
+//   try {
+//     const settingsData = new Settings(req.body);
+//     const { FullName } = settingsData;
+//     const settingsExists = await Settings.findOne({ FullName });
+//     if (settingsExists) {
+//       return res.status(400).json({ message: "Settings already exist" });
+//     }
+//     const savedSettings = await settingsData.save();
+//     res.status(200).json(savedSettings);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
 export const FetchSettings = async (req, res) => {
   try {
@@ -27,22 +27,62 @@ export const FetchSettings = async (req, res) => {
   }
 };
 
-export const UpdateSettings = async (req, res) => {
-  try {
-    const id = req.params.id;
+// export const UpdateSettings = async (req, res) => {
+//   try {
+//     const id = req.params.id;
 
-    const settingsExists = await Settings.findOne({ _id: id });
-    if (!settingsExists) {
-      return res.status(404).json({ message: "Settings not found" });
+//     const settingsExists = await Settings.findOne({ _id: id });
+//     if (!settingsExists) {
+//       return res.status(404).json({ message: "Settings not found" });
+//     }
+//     const updatedSettings = await Settings.findByIdAndUpdate(id, req.body, {
+//       new: true,
+//     });
+//     res.status(201).json(updatedSettings);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
+
+
+// ...............................................................
+export const createOrUpdateSettings = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const settingsData = new Settings(req.body);
+    const { FullName } = settingsData;
+
+    // Check if settings already exist by FullName
+    let existingSettings;
+    if (id) {
+      existingSettings = await Settings.findById(id);
+    } else {
+      existingSettings = await Settings.findOne({ FullName });
     }
-    const updatedSettings = await Settings.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    res.status(201).json(updatedSettings);
+
+    // If settings exist, update; otherwise, create new
+    let savedSettings;
+    if (existingSettings) {
+      // Update existing settings
+      const updatedSettings = await Settings.findByIdAndUpdate(
+        id || existingSettings._id,
+        req.body,
+        { new: true }
+      );
+      savedSettings = updatedSettings;
+    } else {
+      // Create new settings
+      savedSettings = await settingsData.save();
+    }
+
+    res.status(200).json(savedSettings);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// ...............................................................
 
 export const DeleteSettings = async (req, res) => {
   try {
