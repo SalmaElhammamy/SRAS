@@ -6,10 +6,12 @@ import React, { useEffect, useState } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 const Camerafeed = ({ withInference = false }) => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -32,11 +34,13 @@ const Camerafeed = ({ withInference = false }) => {
           })
         );
       } catch (error) {
-        toast.error("Failed to fetch data");
+        toast.error("Failed to load live feed, please try again later.");
+        navigate("/");
       } finally {
         setLoading(false);
       }
     })();
+    // eslint-disable-next-line
   }, [withInference]);
 
   if (loading) {

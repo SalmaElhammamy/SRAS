@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [value, setValue] = useState("one");
@@ -15,6 +16,7 @@ const Settings = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reloadFlag, setReloadFlag] = useState(0);
+  const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -54,11 +56,13 @@ const Settings = () => {
           })
         );
       } catch (error) {
-        toast.error("Failed to fetch data");
+        toast.error("Failed to load live feed, please try again later.");
+        navigate("/");
       } finally {
         setLoading(false);
       }
     })();
+    // eslint-disable-next-line
   }, [reloadFlag]);
 
   if (loading) {
