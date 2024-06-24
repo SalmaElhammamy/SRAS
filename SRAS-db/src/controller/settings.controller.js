@@ -44,13 +44,12 @@ export const FetchSettings = async (req, res) => {
 //   }
 // };
 
-
-
 // ...............................................................
 export const createOrUpdateSettings = async (req, res) => {
   try {
-    const { id } = req.params;
     const settingsData = new Settings(req.body);
+    const id = req.body._id;
+
     const { FullName } = settingsData;
 
     // Check if settings already exist by FullName
