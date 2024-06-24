@@ -81,13 +81,7 @@ if __name__ == '__main__':
         for producer in producers:
             producer.start()
 
-        while True:
-            time.sleep(1)
-
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Stopping producers")
         for producer in producers:
             producer.stop()
-
-        for producer in producers:
-            producer.join()

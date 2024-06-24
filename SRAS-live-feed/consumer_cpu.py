@@ -228,10 +228,20 @@ inference_consumers = [Consumer(driver, WorkerType.WITH_INFERENCE)
 
 if __name__ == '__main__':
 
-    for consumer in consumers:
-        threading.Thread(target=consumer.consume).start()
+    try:
+        for consumer in consumers:
+            threading.Thread(target=consumer.consume).start()
 
-    for inference_consumer in inference_consumers:
-        threading.Thread(target=inference_consumer.consume).start()
+        for inference_consumer in inference_consumers:
+            threading.Thread(target=inference_consumer.consume).start()
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt: Stopping consumers")
+
+        for consumer in consumers:
+            consumer.stop()
+
+        for inference_consumer in inference_consumers:
+            inference_consumer.stop()
 
     app.run(host='0.0.0.0', debug=False)

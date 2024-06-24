@@ -120,6 +120,7 @@ class WorkerWithInference(Worker):
         self.timers = [FPSBasedTimer(15) for _ in self.zones]
 
     def on_message(self, body, message):
+        message.ack()
         size = sys.getsizeof(body) - 33
         np_array = np.frombuffer(body, dtype=np.uint8)
         np_array = np_array.reshape((size, 1))
@@ -129,7 +130,7 @@ class WorkerWithInference(Worker):
             source=frame,
             verbose=False,
             classes=[0],
-            conf=0.7,
+            conf=0.4,
             iou=0.7
         )[0]
 
@@ -146,7 +147,7 @@ class WorkerWithInference(Worker):
             try:
                 detections_in_zone = detections[zone.trigger(detections)]
             except:
-                continue
+                detections_in_zone = sv.Detections.empty()
 
             time_in_zone = self.timers[idx].tick(detections_in_zone)
             custom_color_lookup = np.full(
@@ -171,8 +172,6 @@ class WorkerWithInference(Worker):
         _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
 
         Config.inference_frames[self.driver] = jpeg_frame.tobytes()
-
-        message.ack()
 
 
 class Consumer:
@@ -274,10 +273,20 @@ inference_consumers = [Consumer(driver, WorkerType.WITH_INFERENCE)
 
 if __name__ == '__main__':
 
-    for consumer in consumers:
-        threading.Thread(target=consumer.consume).start()
+    try:
+        for consumer in consumers:
+            threading.Thread(target=consumer.consume).start()
 
-    for inference_consumer in inference_consumers:
-        threading.Thread(target=inference_consumer.consume).start()
+        for inference_consumer in inference_consumers:
+            threading.Thread(target=inference_consumer.consume).start()
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt: Stopping consumers")
+
+        for consumer in consumers:
+            consumer.stop()
+
+        for inference_consumer in inference_consumers:
+            inference_consumer.stop()
 
     app.run(host='0.0.0.0', debug=False)
