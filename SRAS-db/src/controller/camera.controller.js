@@ -72,7 +72,12 @@ export const GetCameraCoordinateByDriverId = async (req, res) => {
     if (!cameraExists) {
       return res.status(404).json({ message: "Camera not found" });
     }
-    res.status(201).json({ coordinates: cameraExists.AreaOfIntrest });
+    res
+      .status(201)
+      .json({
+        coordinates: cameraExists.AreaOfIntrest,
+        isTriggered: cameraExists.IsTriggered,
+      });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

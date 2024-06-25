@@ -18,6 +18,8 @@ from utils.timers import FPSBasedTimer
 
 import requests
 import json
+from datetime import datetime
+import time
 
 from dotenv import load_dotenv
 env_path = '../.env'
@@ -34,10 +36,13 @@ class WorkerType(Enum):
     WITH_INFERENCE = 2
 
 
+class EmailNotification(Enum):
+    MOTION_DETECTED_ALERT = 1
+    TIME_EXCEEDED_ALERT = 2
+    PEOPLE_EXCEEDED_ALERT = 3
+
+
 tracker = sv.ByteTrack(minimum_matching_threshold=0.9)
-
-zone_configuration_path = './config.json'
-
 
 COLORS = sv.ColorPalette.from_hex(["#E6194B", "#3CB44B", "#FFE119", "#3C76D1"])
 COLOR_ANNOTATOR = sv.ColorAnnotator(color=COLORS)
@@ -53,11 +58,52 @@ def get_coordinates(driverId):
         response = response.json()
 
         nested_list = json.loads(response['coordinates'])
+        is_triggered = response['isTriggered']
         array_list = [np.array(sublist) for sublist in nested_list]
-        return array_list
+        return array_list, is_triggered
     except Exception as e:
         print(e)
         return None
+
+# TODO: Implement email notification
+
+
+def send_email_notification(notification_type, driverId, zoneId):
+    pass
+
+
+def is_after_9pm():
+    now = datetime.now()
+    nine_pm = now.replace(hour=21, minute=0, second=0, microsecond=0)
+
+    return now > nine_pm
+
+
+def send_metrics(total_times_in_zones, people_counts, zones, driverId):
+    metrics = {
+        "DriverId": driverId,
+        "Zones": []
+    }
+    for idx in range(len(zones)):
+        average_time_in_zone = np.mean(
+            total_times_in_zones[idx]) if total_times_in_zones[idx] else 0
+        average_people_count = np.mean(
+            people_counts[idx]) if people_counts[idx] else 0
+
+        max_people_count = max(people_counts[idx]) if people_counts[idx] else 0
+
+        metrics["Zones"].append({
+            "ZoneId": idx + 1,
+            "AverageTimeInZone": average_time_in_zone,
+            "AveragePeopleInZone": average_people_count,
+            "MaxPeopleInZone": max_people_count,
+        })
+
+        try:
+            requests.post(
+                f'{URL}:{DB_SERVER_PORT}/metrics', json=metrics)
+        except Exception as e:
+            print(e)
 
 
 class Config:
@@ -67,7 +113,11 @@ class Config:
     frames = {driver: None for driver in camera_drivers}
     inference_frames = {driver: None for driver in camera_drivers}
     models = {driver: None for driver in camera_drivers}
-    polygons = {driver: get_coordinates(driver) for driver in camera_drivers}
+    polygons = {}
+    is_triggered = {}
+
+    for driver in camera_drivers:
+        polygons[driver], is_triggered[driver] = get_coordinates(driver)
 
 
 class Worker(ConsumerMixin):
@@ -106,6 +156,8 @@ class WorkerWithInference(Worker):
             print(f"Model for {driver} is using CPU")
 
         self.get_coordinates()
+        self.is_triggered = Config.is_triggered[self.driver]
+        self.start_time = time.time()
 
     def get_coordinates(self):
         self.polygons = Config.polygons[self.driver]
@@ -118,6 +170,9 @@ class WorkerWithInference(Worker):
             for polygon in self.polygons
         ]
         self.timers = [FPSBasedTimer(15) for _ in self.zones]
+
+        self.total_times_in_zones = {i: [] for i in range(len(self.zones))}
+        self.people_counts = {i: [] for i in range(len(self.zones))}
 
     def on_message(self, body, message):
         message.ack()
@@ -144,14 +199,26 @@ class WorkerWithInference(Worker):
                 scene=annotated_frame, polygon=zone.polygon, color=COLORS.by_idx(
                     idx)
             )
+
             try:
                 detections_in_zone = detections[zone.trigger(detections)]
             except:
-                detections_in_zone = sv.Detections.empty()
+                continue
+
+            if self.is_triggered and is_after_9pm():
+                send_email_notification(
+                    EmailNotification.MOTION_DETECTED_ALERT, self.driver, idx)
 
             time_in_zone = self.timers[idx].tick(detections_in_zone)
             custom_color_lookup = np.full(
                 detections_in_zone.class_id.shape, idx)
+
+            valid_times = [time for time in time_in_zone if time > 3]
+
+            if valid_times:
+                self.total_times_in_zones[idx].extend(valid_times)
+                self.people_counts[idx].append(
+                    len(detections_in_zone.tracker_id))
 
             annotated_frame = COLOR_ANNOTATOR.annotate(
                 scene=annotated_frame,
@@ -170,6 +237,12 @@ class WorkerWithInference(Worker):
             )
 
         _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
+
+        elapsed_time = time.time() - self.start_time
+        if elapsed_time >= 60 * 5:
+            send_metrics(self.total_times_in_zones,
+                         self.people_counts, self.zones, self.driver)
+            self.start_time = time.time()
 
         Config.inference_frames[self.driver] = jpeg_frame.tobytes()
 

@@ -148,7 +148,7 @@ export const FetchMetrics = async (req, res) => {
 
     res.status(200).json([
       {
-        title: "Today",
+        title: "Last 5 minutes",
         data: todayLastMetrics?.Zones ? parseData(todayLastMetrics.Zones) : [],
       },
       {
