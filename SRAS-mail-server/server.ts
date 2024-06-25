@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const app = express();
 
+
 app.use(cors());
 app.use(express.json());
 
@@ -21,6 +22,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
+
+
 
 const sendEmail = ({ email, subject, body }) => {
   return new Promise((resolve, reject) => {
@@ -49,4 +52,4 @@ app.post("/send-email", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Node mailer is running on port ${port}`);
-});
+}); 
