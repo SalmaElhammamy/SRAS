@@ -57,7 +57,8 @@ const Settings = () => {
         );
       } catch (error) {
         toast.error("Failed to load live feed, please try again later.");
-        navigate("/");
+        //TODO: Redirect
+        // navigate("/");
       } finally {
         setLoading(false);
       }
