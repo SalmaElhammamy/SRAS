@@ -5,7 +5,7 @@ import {
   UpdateCamera,
   DeleteCamera,
   GetCameraCoordinateByDriverId,
-} from "../Controller/camera.controller.js";
+} from "../controller/camera.controller.js";
 
 const cameraRouter = express.Router();
 

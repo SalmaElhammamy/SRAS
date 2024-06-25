@@ -17,11 +17,13 @@ const videoRoutes = require("./routes/videos.route");
 const emailRoutes = require("./routes/mails.route");
 const testRoutes = require("./routes/test.route");
 const settinsRoutes = require("./routes/settings.route");
+const dashBoardRoutes = require("./routes/dashboard.route");
 
 mainRouter.use("/video", videoRoutes);
 mainRouter.use("/test", testRoutes);
 mainRouter.use("/email", emailRoutes);
 mainRouter.use("/settings", settinsRoutes);
+mainRouter.use("/dashboard", dashBoardRoutes);
 
 const port = process.env.GATEWAY_PORT;
 

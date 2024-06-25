@@ -6,8 +6,9 @@ import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import cameraRouter from "./Routes/camera.route.js";
-import settingsRouter from "./Routes/settings.route.js";
+import cameraRouter from "./routes/camera.route.js";
+import settingsRouter from "./routes/settings.route.js";
+import metricsRouter from "./routes/metrics.route.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,7 @@ const MONGOURL = process.env.MONGO_DB_URL;
 
 app.use("/camera", cameraRouter);
 app.use("/settings", settingsRouter);
+app.use("/metrics", metricsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
