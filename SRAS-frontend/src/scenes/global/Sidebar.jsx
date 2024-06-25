@@ -108,14 +108,22 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Camera Feed"
-              to="/camerafeed"
+              to="/camera-feed"
+              icon={<VideocamOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Predictions"
+              to="/predictions"
               icon={<VideocamOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Predictions"
-              to="/camerafeedinference"
+              title="Heat Maps"
+              to="/heat-maps"
               icon={<VideocamOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

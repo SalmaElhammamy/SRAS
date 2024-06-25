@@ -63,4 +63,30 @@ router.get("/preview", async (req, res) => {
   }
 });
 
+router.get("/heatmaps", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}/heatmaps`
+    );
+    const cameraSettings = await axios.get(
+      `${process.env.URL}:${process.env.DB_SERVER_PORT}/camera`
+    );
+
+    const cameraSettingsMap = cameraSettings.data.reduce((map, camera) => {
+      map[camera.DriverId] = camera;
+      return map;
+    }, {});
+
+    res.json(
+      response.data.map((item) => ({
+        driverId: item.cameraId,
+        imageURL: `${process.env.URL}:${process.env.VIDEO_SERVICE_PORT}${item.imageURL}`,
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 module.exports = router;

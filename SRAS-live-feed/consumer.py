@@ -13,8 +13,9 @@ import torch
 from ultralytics import YOLO
 import supervision as sv
 
-from utils.general import find_in_list, load_zones_config
+from utils.general import find_in_list
 from utils.timers import FPSBasedTimer
+from utils.heatmap import Heatmap
 
 import requests
 import json
@@ -106,6 +107,18 @@ def send_metrics(total_times_in_zones, people_counts, zones, driverId):
             print(e)
 
 
+def generate_heatmap_periodically(heatmap_obj, interval, driver):
+
+    while True:
+        time.sleep(interval)
+        if heatmap_obj.first_frame is not None:
+            final_heatmap_image = heatmap_obj.finalize_heatmap(
+                heatmap_obj.first_frame.copy(), intensity_factor=2.0)
+
+            cv2.imwrite(
+                f"SRAS-live-feed/Images/heatmap-{driver}.jpg", final_heatmap_image)
+
+
 class Config:
     broker_url = 'amqp://guest:guest@localhost:5672//'
     camera_drivers = ['0', '1']
@@ -159,6 +172,14 @@ class WorkerWithInference(Worker):
         self.is_triggered = Config.is_triggered[self.driver]
         self.start_time = time.time()
 
+        self.heatmap_obj = Heatmap()
+        self.heatmap_obj.set_args(
+            imw=1000,
+            imh=600,
+            shape="circle",
+        )
+        self.first_frame = None
+
     def get_coordinates(self):
         self.polygons = Config.polygons[self.driver]
 
@@ -181,6 +202,14 @@ class WorkerWithInference(Worker):
         np_array = np_array.reshape((size, 1))
         frame = cv2.imdecode(np_array, 1)
 
+        if self.first_frame is None:
+            self.first_frame = frame.copy()
+            self.heatmap_obj.first_frame = self.first_frame
+            self.heatmap_thread = threading.Thread(
+                target=generate_heatmap_periodically, args=(self.heatmap_obj, 5, self.driver))
+            self.heatmap_thread.daemon = True
+            self.heatmap_thread.start()
+
         results = self.model.predict(
             source=frame,
             verbose=False,
@@ -192,6 +221,9 @@ class WorkerWithInference(Worker):
         detections = sv.Detections.from_ultralytics(results)
         detections = detections[find_in_list(detections.class_id, [0])]
         detections = tracker.update_with_detections(detections)
+
+        if detections.tracker_id is not None or len(detections.tracker_id) != 0:
+            self.heatmap_obj.update_from_detections(detections)
 
         annotated_frame = frame.copy()
         for idx, zone in enumerate(self.zones):
@@ -278,16 +310,37 @@ def preview():
             file_name = f'preview-{camera_driver}.jpg'
             image_path = os.path.join('Images', file_name)
             if os.path.exists(image_path):
-                image = cv2.imread(image_path)
-                height, width, _ = image.shape
-
                 image_url = url_for('static', filename=file_name)
-
                 image_lists.append({
                     "cameraId": camera_driver,
                     "imageURL": image_url,
-                    "height": height,
-                    "width": width
+                })
+            else:
+                continue
+
+        return jsonify(image_lists)
+    except Exception as e:
+        print(e)
+        return "An error occurred"
+
+    finally:
+        os.chdir('..')
+
+
+@app.route('/heatmaps')
+def heatmaps():
+    try:
+        image_lists = []
+        os.chdir('SRAS-live-feed')
+
+        for camera_driver in Config.camera_drivers:
+            file_name = f'heatmap-{camera_driver}.jpg'
+            image_path = os.path.join('Images', file_name)
+            if os.path.exists(image_path):
+                image_url = url_for('static', filename=file_name)
+                image_lists.append({
+                    "cameraId": camera_driver,
+                    "imageURL": image_url, "imageURL": image_url,
                 })
             else:
                 continue
