@@ -11,7 +11,8 @@ const Comp = ({ title, barCharts }) => {
       container
       spacing={2}
       sx={{
-        borderBottom: "5px solid red",
+        boxShadow: "0px 0px 10px 0px rgba(255, 255, 255,0.5)",
+        marginBottom: "5rem",
       }}
     >
       <Grid item xs={12}>
