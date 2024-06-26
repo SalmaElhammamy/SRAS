@@ -12,21 +12,23 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-export interface PeopleExceededProps {
+export interface MotionDetectedProps {
   CameraName?: string;
   ZoneName?: string;
-  PeopleExceeded?: number;
 }
 
-export const PeopleExceededTemplate = ({
+export const MotionDetectedTemplate = ({
   CameraName,
   ZoneName,
-  PeopleExceeded,
-}: PeopleExceededProps) => {
+}: MotionDetectedProps) => {
+  const formattedDate = new Intl.DateTimeFormat("en", {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date());
   return (
     <Html>
       <Head />
-      <Preview>People Exceeded</Preview>
+      <Preview>Motion Detected</Preview>
       <Body style={main}>
         <Container>
           <Section style={content}>
@@ -39,7 +41,7 @@ export const PeopleExceededTemplate = ({
                     textAlign: "center",
                   }}
                 >
-                  🛒
+                  🕒
                 </Heading>
 
                 <Text style={paragraph}>
@@ -53,8 +55,8 @@ export const PeopleExceededTemplate = ({
                 </Text>
 
                 <Text style={{ ...paragraph, marginTop: -5 }}>
-                  <b>Number of People Exceeded: </b>
-                  {PeopleExceeded}
+                  <b>Time of Motion Detection: </b>
+                  {formattedDate}
                 </Text>
               </Column>
             </Row>
@@ -74,9 +76,8 @@ export const PeopleExceededTemplate = ({
     </Html>
   );
 };
-PeopleExceededTemplate.Subject = "Alert - Number of People Exceeded";
-
-export default PeopleExceededTemplate;
+MotionDetectedTemplate.Subject = "Alert - Motion Detected";
+export default MotionDetectedTemplate;
 
 const main = {
   backgroundColor: "#fff",
