@@ -48,7 +48,7 @@ const BarChart = ({ isDashboard = false, barChart }) => {
         }}
         keys={["y_value"]}
         indexBy="x_value"
-        margin={{ bottom: 60, left: 60, top: 60 }}
+        margin={{ bottom: 60, left: 60, top: 60, right: 15 }}
         padding={0.3}
         valueScale={{ type: "linear" }}
         indexScale={{ type: "band", round: true }}

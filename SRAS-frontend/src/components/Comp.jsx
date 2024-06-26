@@ -13,20 +13,24 @@ const Comp = ({ title, barCharts }) => {
       sx={{
         boxShadow: "0px 0px 10px 0px rgba(255, 255, 255,0.5)",
         marginBottom: "5rem",
+        borderRadius: "1rem",
       }}
     >
       <Grid item xs={12}>
         <Box>
           <Typography
-            variant="h4"
+            variant="h3"
             fontWeight="600"
-            sx={{ paddingLeft: "1rem" }}
+            sx={{
+              paddingLeft: "1rem",
+              textAlign: "center",
+              marginBottom: "-4rem",
+            }}
           >
             {title}
           </Typography>
         </Box>
       </Grid>
-
       {barCharts.map((barChart, index) => (
         <Grid
           item

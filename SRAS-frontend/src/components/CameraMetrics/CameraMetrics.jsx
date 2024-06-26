@@ -38,6 +38,14 @@ const RenderCameraMetrics = (driverId) => {
                   { x_value: "MaxPeopleInZone", y_value: 4 },
                 ],
               },
+              {
+                title: "Zone 3",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 2 },
+                  { x_value: "AveragePeopleInZone", y_value: 3 },
+                  { x_value: "MaxPeopleInZone", y_value: 4 },
+                ],
+              },
             ],
           },
 
