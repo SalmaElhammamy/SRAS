@@ -375,10 +375,14 @@ def video_feed_inference(driver_uuid):
 
 @app.route('/update-coordinates')
 def update_coordinates():
-    Config.polygons = {driver: get_coordinates(
-        driver) for driver in Config.camera_drivers}
+
+    for driver in Config.camera_drivers:
+        Config.polygons[driver], Config.is_triggered[driver] = get_coordinates(
+            driver)
+
     for inference_consumer in inference_consumers:
         inference_consumer.update_coordinates()
+
     return "Coordinates updated"
 
 

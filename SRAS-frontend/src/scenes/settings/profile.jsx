@@ -1,29 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, TextField } from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import { sendEmail as sendEmailService } from "../../services/settingsServices";
+import { getProfile, saveProfile } from "../../services/settingsServices";
 import { toast } from "react-toastify";
-const ProfileTabPanel = ({
-  value,
-  index,
-  profile,
-  handleProfileChange,
-  handleSaveProfile,
-}) => {
-  const sendEmail = async () => {
-    const { email } = profile;
-    sendEmailService({
-      email,
-      subject: "SRAS",
-      body: "Test",
-    })
-      .then((response) => {
-        toast.success("Email sent successfully");
-      })
-      .catch((error) => {
-        toast.error("Failed to send email");
-      });
+
+const ProfileTabPanel = ({ value, index }) => {
+  const [profile, setProfile] = useState({ Name: "", email: "", _id: "" });
+
+  const handleProfileChange = (prop) => (event) => {
+    setProfile({ ...profile, [prop]: event.target.value });
   };
+
+  const handleSaveProfile = async () => {
+    try {
+      await saveProfile({
+        FullName: profile.name,
+        Email: profile.email,
+        _id: profile._id,
+      });
+      toast.success("Profile saved successfully.");
+    } catch (error) {
+      toast.error("Failed to save profile, please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getProfile();
+        setProfile({
+          name: response.data.FullName,
+          email: response.data.Email,
+          _id: response.data._id,
+        });
+      } catch (error) {
+        toast.error("Failed to load profile, please try again later.");
+      }
+    })();
+  }, []);
 
   return (
     <div
@@ -57,10 +70,6 @@ const ProfileTabPanel = ({
             sx={{ mr: 2 }}
           >
             Save
-          </Button>
-          <Button variant="contained" color="secondary" onClick={sendEmail}>
-            <MailOutlineIcon sx={{ mr: "10px" }} />
-            Send Email
           </Button>
         </Box>
       )}

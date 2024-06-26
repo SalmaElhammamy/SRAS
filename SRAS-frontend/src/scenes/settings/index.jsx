@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [value, setValue] = useState("one");
-  const [profile, setProfile] = useState({ name: "", email: "" });
 
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,14 +19,6 @@ const Settings = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const handleProfileChange = (prop) => (event) => {
-    setProfile({ ...profile, [prop]: event.target.value });
-  };
-
-  const handleSaveProfile = () => {
-    console.log("Profile saved:", profile);
   };
 
   useEffect(() => {
@@ -107,13 +98,7 @@ const Settings = () => {
         </Box>
       </TabPanel>
 
-      <ProfileTabPanel
-        value={value}
-        index="two"
-        profile={profile}
-        handleProfileChange={handleProfileChange}
-        handleSaveProfile={handleSaveProfile}
-      />
+      <ProfileTabPanel value={value} index="two" />
     </Box>
   );
 };
