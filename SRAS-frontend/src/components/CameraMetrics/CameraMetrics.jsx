@@ -1,13 +1,16 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import { getCameraData } from "../../services/dashboardServices";
-import BarChart from "../BarChart";
+import { Box, Typography, useTheme } from "@mui/material";
 import Comp from "../Comp";
 
+import { tokens } from "../../theme.js";
+
 const RenderCameraMetrics = (driverId) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(true);
   const [cameraMetrics, setCameraMetrics] = useState([]);
 
@@ -25,25 +28,25 @@ const RenderCameraMetrics = (driverId) => {
               {
                 title: "Zone 1",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 2 },
-                  { x_value: "AveragePeopleInZone", y_value: 3 },
-                  { x_value: "MaxPeopleInZone", y_value: 4 },
+                  { x_value: "AVG TIME", y_value: 2 },
+                  { x_value: "AVG PEOPLE", y_value: 3 },
+                  { x_value: "MAX PEOPLE", y_value: 4 },
                 ],
               },
               {
                 title: "Zone 2",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 1 },
-                  { x_value: "AveragePeopleInZone", y_value: 2 },
-                  { x_value: "MaxPeopleInZone", y_value: 4 },
+                  { x_value: "AVG TIME", y_value: 1 },
+                  { x_value: "AVG PEOPLE", y_value: 2 },
+                  { x_value: "MAX PEOPLE", y_value: 4 },
                 ],
               },
               {
                 title: "Zone 3",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 2 },
-                  { x_value: "AveragePeopleInZone", y_value: 3 },
-                  { x_value: "MaxPeopleInZone", y_value: 4 },
+                  { x_value: "AVG TIME", y_value: 2 },
+                  { x_value: "AVG PEOPLE", y_value: 3 },
+                  { x_value: "MAX PEOPLE", y_value: 4 },
                 ],
               },
             ],
@@ -55,17 +58,17 @@ const RenderCameraMetrics = (driverId) => {
               {
                 title: "Zone 1",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 2.5 },
-                  { x_value: "AveragePeopleInZone", y_value: 3.6 },
-                  { x_value: "MaxPeopleInZone", y_value: 4.7 },
+                  { x_value: "AVG TIME", y_value: 2.5 },
+                  { x_value: "AVG PEOPLE", y_value: 3.6 },
+                  { x_value: "MAX PEOPLE", y_value: 4.7 },
                 ],
               },
               {
                 title: "Zone 2",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 5 },
-                  { x_value: "AveragePeopleInZone", y_value: 6.5 },
-                  { x_value: "MaxPeopleInZone", y_value: 4.3 },
+                  { x_value: "AVG TIME", y_value: 5 },
+                  { x_value: "AVG PEOPLE", y_value: 6.5 },
+                  { x_value: "MAX PEOPLE", y_value: 4.3 },
                 ],
               },
             ],
@@ -77,17 +80,17 @@ const RenderCameraMetrics = (driverId) => {
               {
                 title: "Zone 1",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 4.6 },
-                  { x_value: "AveragePeopleInZone", y_value: 9.6 },
-                  { x_value: "MaxPeopleInZone", y_value: 4.3 },
+                  { x_value: "AVG TIME", y_value: 4.6 },
+                  { x_value: "AVG PEOPLE", y_value: 9.6 },
+                  { x_value: "MAX PEOPLE", y_value: 4.3 },
                 ],
               },
               {
                 title: "Zone 2",
                 barChart: [
-                  { x_value: "AverageTimeInZone", y_value: 6 },
-                  { x_value: "AveragePeopleInZone", y_value: 6 },
-                  { x_value: "MaxPeopleInZone", y_value: 6.5 },
+                  { x_value: "AVG TIME", y_value: 6 },
+                  { x_value: "AVG PEOPLE", y_value: 6 },
+                  { x_value: "MAX PEOPLE", y_value: 6.5 },
                 ],
               },
             ],
@@ -118,6 +121,22 @@ const RenderCameraMetrics = (driverId) => {
     );
   }
 
+  if (cameraMetrics.length === 0) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h1" fontWeight={800} color={colors.grey[300]}>
+          NO AVAILABLE DATA
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <Box m="20px">
       {cameraMetrics.map((cameraMetric, index) => (

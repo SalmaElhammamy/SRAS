@@ -271,7 +271,7 @@ class WorkerWithInference(Worker):
         _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
 
         elapsed_time = time.time() - self.start_time
-        if elapsed_time >= 60 * 5:
+        if elapsed_time >= 10:
             send_metrics(self.total_times_in_zones,
                          self.people_counts, self.zones, self.driver)
             self.start_time = time.time()
