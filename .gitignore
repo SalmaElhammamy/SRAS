@@ -37,3 +37,4 @@ yolo*
 /SRAS-db/node_modules
 /SRAS-db/package-lock.json
 /SRAS-live-feed/temp.py
+/SRAS-mail-server/node_modules
