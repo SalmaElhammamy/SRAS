@@ -41,7 +41,7 @@ export const ReportTemplate = ({ Name }: ReportProps) => {
                     textAlign: "center",
                   }}
                 >
-                  Hi {Name},
+                  Hi {Name} 👋
                 </Heading>
                 <Heading
                   as="h2"

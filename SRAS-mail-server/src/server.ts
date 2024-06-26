@@ -48,7 +48,7 @@ app.post("/send-email", (req, res) => {
   //TODO get the name from the db
   const reportTemplateHTML = render(
     ReportTemplate({
-      Name: "Monmon",
+      Name: "Shosho",
     })
   );
   sendEmail(email, subject, reportTemplateHTML)
