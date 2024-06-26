@@ -5,6 +5,8 @@ import { getDriversData } from "../../services/dashboardServices";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import CameraMetrics from "../../components/CameraMetrics/CameraMetrics";
+import Comp from "../../components/Comp";
+
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -86,6 +88,11 @@ const Dashboard = () => {
             index={driver.DriverId}
           />
         ))}
+      </Box>
+      <Box m="20px">
+        <Box height="100vh">
+          <Comp />
+        </Box>
       </Box>
     </Box>
   );

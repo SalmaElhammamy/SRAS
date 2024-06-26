@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import { getCameraData } from "../../services/dashboardServices";
+import BarChart from "../BarChart";
 
 const RenderCameraMetrics = (driverId) => {
   const [loading, setLoading] = useState(true);
@@ -119,7 +120,9 @@ const RenderCameraMetrics = (driverId) => {
         Zonefor each camera metric, display a bar chart with the x_values as the labels and y_values as the data
         the title of the bar chart should be the title of the camera metric
     */
-  return <div>{`Driver ID: ${driverId}`}</div>;
+  // return <div>{CameraMetrics.map((metric) => {
+
+  // })}</div>;
 };
 
 export default function CameraMetrics({ driverId, value, index }) {
