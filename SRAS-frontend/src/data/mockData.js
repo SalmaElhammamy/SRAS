@@ -2,82 +2,80 @@ import { tokens } from "../theme";
 
 export const barData = [
   {
-    title: 'Today',
+    title: "Today",
     data: [
       {
-        title: 'Zone 1',
+        title: "Zone 1",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 2},
-          {x_value: 'AveragePeopleInZone', y_value: 3},
-          {x_value: 'MaxPeopleInZone', y_value: 4},
+          { x_value: "AverageTimeInZone", y_value: 2 },
+          { x_value: "AveragePeopleInZone", y_value: 3 },
+          { x_value: "MaxPeopleInZone", y_value: 4 },
         ],
       },
       {
-        title: 'Zone 2',
+        title: "Zone 2",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 1},
-          {x_value: 'AveragePeopleInZone', y_value: 2},
-          {x_value: 'MaxPeopleInZone', y_value: 4},
+          { x_value: "AverageTimeInZone", y_value: 1 },
+          { x_value: "AveragePeopleInZone", y_value: 2 },
+          { x_value: "MaxPeopleInZone", y_value: 4 },
         ],
       },
     ],
   },
-  
+
   {
-    title: 'This Week',
+    title: "This Week",
     data: [
       {
-        title: 'Zone 1',
+        title: "Zone 1",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 2.5},
-          {x_value: 'AveragePeopleInZone', y_value: 3.6},
-          {x_value: 'MaxPeopleInZone', y_value: 4.7},
+          { x_value: "AverageTimeInZone", y_value: 2.5 },
+          { x_value: "AveragePeopleInZone", y_value: 3.6 },
+          { x_value: "MaxPeopleInZone", y_value: 4.7 },
         ],
       },
       {
-        title: 'Zone 2',
+        title: "Zone 2",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 5},
-          {x_value: 'AveragePeopleInZone', y_value: 6.5},
-          {x_value: 'MaxPeopleInZone', y_value: 4.3},
+          { x_value: "AverageTimeInZone", y_value: 5 },
+          { x_value: "AveragePeopleInZone", y_value: 6.5 },
+          { x_value: "MaxPeopleInZone", y_value: 4.3 },
         ],
       },
     ],
   },
-  
+
   {
-    title: 'This Month',
+    title: "This Month",
     data: [
       {
-        title: 'Zone 1',
+        title: "Zone 1",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 4.6},
-          {x_value: 'AveragePeopleInZone', y_value: 9.6},
-          {x_value: 'MaxPeopleInZone', y_value: 4.3},
+          { x_value: "AverageTimeInZone", y_value: 4.6 },
+          { x_value: "AveragePeopleInZone", y_value: 9.6 },
+          { x_value: "MaxPeopleInZone", y_value: 4.3 },
         ],
       },
       {
-        title: 'Zone 2',
+        title: "Zone 2",
         barChart: [
-          {x_value: 'AverageTimeInZone', y_value: 6},
-          {x_value: 'AveragePeopleInZone', y_value: 6},
-          {x_value: 'MaxPeopleInZone', y_value: 6.5},
+          { x_value: "AverageTimeInZone", y_value: 6 },
+          { x_value: "AveragePeopleInZone", y_value: 6 },
+          { x_value: "MaxPeopleInZone", y_value: 6.5 },
         ],
       },
     ],
   },
-]
-
-
-export const mockBarData = [
-
-  { x_value: "AverageTimeInZone", y_value: 2 },
-  { x_value: "AveragePeopleInZone", y_value: 3 },
-  { x_value: "MaxPeopleInZone", y_value: 4 },
-  
-
-  
 ];
+
+export const mockBarData = {
+  title: "Zone 1",
+  data: [
+    { x_value: "AverageTimeInZone", y_value: 2 },
+    { x_value: "AveragePeopleInZone", y_value: 3 },
+    { x_value: "MaxPeopleInZone", y_value: 4 },
+  ],
+};
 
 //   {
 //     country: "AE",
@@ -344,4 +342,3 @@ export const mockLineData = [
     ],
   },
 ];
-

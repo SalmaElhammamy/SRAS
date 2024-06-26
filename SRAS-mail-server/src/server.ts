@@ -101,7 +101,6 @@ app.post("/send-email", async (req, res) => {
         subject = WaitTimeTemplate.Subject;
         break;
     }
-
     const response = await sendEmail(userSettings.Email, subject, templateHTML);
 
     res.send((response as any).message);

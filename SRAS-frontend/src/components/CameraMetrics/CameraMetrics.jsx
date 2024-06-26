@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import { getCameraData } from "../../services/dashboardServices";
 import BarChart from "../BarChart";
+import Comp from "../Comp";
 
 const RenderCameraMetrics = (driverId) => {
   const [loading, setLoading] = useState(true);
@@ -23,67 +24,63 @@ const RenderCameraMetrics = (driverId) => {
             data: [
               {
                 title: "Zone 1",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 2 },
+                  { x_value: "AveragePeopleInZone", y_value: 3 },
+                  { x_value: "MaxPeopleInZone", y_value: 4 },
                 ],
-                y_values: [2, 3, 4],
               },
               {
                 title: "Zone 2",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 1 },
+                  { x_value: "AveragePeopleInZone", y_value: 2 },
+                  { x_value: "MaxPeopleInZone", y_value: 4 },
                 ],
-                y_values: [5, 5, 5],
               },
             ],
           },
+
           {
             title: "This Week",
             data: [
               {
                 title: "Zone 1",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 2.5 },
+                  { x_value: "AveragePeopleInZone", y_value: 3.6 },
+                  { x_value: "MaxPeopleInZone", y_value: 4.7 },
                 ],
-                y_values: [2, 3, 4],
               },
               {
                 title: "Zone 2",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 5 },
+                  { x_value: "AveragePeopleInZone", y_value: 6.5 },
+                  { x_value: "MaxPeopleInZone", y_value: 4.3 },
                 ],
-                y_values: [5, 5, 5],
               },
             ],
           },
+
           {
             title: "This Month",
             data: [
               {
                 title: "Zone 1",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 4.6 },
+                  { x_value: "AveragePeopleInZone", y_value: 9.6 },
+                  { x_value: "MaxPeopleInZone", y_value: 4.3 },
                 ],
-                y_values: [2, 3, 4],
               },
               {
                 title: "Zone 2",
-                x_values: [
-                  "AverageTimeInZone",
-                  "AveragePeopleInZone",
-                  "MaxPeopleInZone",
+                barChart: [
+                  { x_value: "AverageTimeInZone", y_value: 6 },
+                  { x_value: "AveragePeopleInZone", y_value: 6 },
+                  { x_value: "MaxPeopleInZone", y_value: 6.5 },
                 ],
-                y_values: [5, 5, 5],
               },
             ],
           },
@@ -97,7 +94,6 @@ const RenderCameraMetrics = (driverId) => {
   }, []);
 
   //IMPORtant
-  console.log(cameraMetrics);
 
   if (loading) {
     return (
@@ -114,15 +110,17 @@ const RenderCameraMetrics = (driverId) => {
     );
   }
 
-  /*
-        TODO:
-        Implement the UI for the camera metrics, use the data from the cameraMetrics state
-        Zonefor each camera metric, display a bar chart with the x_values as the labels and y_values as the data
-        the title of the bar chart should be the title of the camera metric
-    */
-  // return <div>{CameraMetrics.map((metric) => {
-
-  // })}</div>;
+  return (
+    <Box m="20px">
+      {cameraMetrics.map((cameraMetric, index) => (
+        <Comp
+          key={index}
+          title={cameraMetric.title}
+          barCharts={cameraMetric.data}
+        />
+      ))}
+    </Box>
+  );
 };
 
 export default function CameraMetrics({ driverId, value, index }) {

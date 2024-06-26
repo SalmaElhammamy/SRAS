@@ -1,31 +1,44 @@
-import { Box, useTheme, Typography } from "@mui/material";
+import { Box, useTheme, Typography, Grid } from "@mui/material";
 import { tokens } from "../theme";
 import BarChart from "./BarChart";
 
+const Comp = ({ title, barCharts }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
-const Comp = () => {
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
-
-    return (
+  return (
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        borderBottom: "5px solid red",
+      }}
+    >
+      <Grid item xs={12}>
         <Box>
-            
-            <Box>
-                <Typography
-                    variant="h5"
-                    fontWeight="600"
-                    sx={{ padding: "30px 30px 0 30px" }}
-                >
-                    Today
-                    hi<BarChart/>hi
-                </Typography>
-                
-            </Box>
-            <Box>
-                <BarChart  />
-            </Box>
+          <Typography
+            variant="h4"
+            fontWeight="600"
+            sx={{ paddingLeft: "1rem" }}
+          >
+            {title}
+          </Typography>
         </Box>
-    );
+      </Grid>
+
+      {barCharts.map((barChart, index) => (
+        <Grid
+          item
+          xs={4}
+          sx={{
+            height: "60vh",
+          }}
+        >
+          <BarChart barChart={barChart} />
+        </Grid>
+      ))}
+    </Grid>
+  );
 };
 
 export default Comp;
