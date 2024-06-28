@@ -6,7 +6,6 @@ const Header = ({ title, subtitle, sx }) => {
   const colors = tokens(theme.palette.mode);
   return (
     <Box
-      mb="30px"
       sx={{
         ...sx,
       }}

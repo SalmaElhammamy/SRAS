@@ -10,11 +10,13 @@ warnings.filterwarnings("ignore", category=pd.errors.PerformanceWarning)
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return "Upload a CSV file at /upload"
 
-@app.route('/upload', methods=['POST'])
+
+@app.route('/associations', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -39,25 +41,32 @@ def upload_file():
         # Generate association rules
         total_rules = []
         for i in range(3):
-            segment = (df[df['Class'] == i])[['InvoiceNo', 'StockCode']].groupby('InvoiceNo')['StockCode'].agg(list).reset_index().set_index('InvoiceNo')
-            unique_products = set(product for sublist in segment["StockCode"] for product in sublist)
+            segment = (df[df['Class'] == i])[['InvoiceNo', 'StockCode']].groupby(
+                'InvoiceNo')['StockCode'].agg(list).reset_index().set_index('InvoiceNo')
+            unique_products = set(
+                product for sublist in segment["StockCode"] for product in sublist)
             for product in unique_products:
-                segment[product] = segment["StockCode"].apply(lambda x: 1 if product in x else 0)
+                segment[product] = segment["StockCode"].apply(
+                    lambda x: 1 if product in x else 0)
 
             segment.drop(columns=['StockCode'], inplace=True)
             for c in segment.columns:
                 segment[c] = segment[c].astype("bool")
             res = fpgrowth(segment, min_support=0.02, use_colnames=True)
 
-            res = association_rules(res, metric="confidence", min_threshold=0.5)
+            res = association_rules(
+                res, metric="confidence", min_threshold=0.5)
             sorted_results = res.sort_values(by="lift", ascending=False)
 
             rules = []
             for index, row in sorted_results.iterrows():
-                antecedent = str(row['antecedents']).replace('frozenset', '').replace('{', '').replace('}', '')
-                consequent = str(row['consequents']).replace('frozenset', '').replace('{', '').replace('}', '')
+                antecedent = str(row['antecedents']).replace(
+                    'frozenset', '').replace('{', '').replace('}', '')
+                consequent = str(row['consequents']).replace(
+                    'frozenset', '').replace('{', '').replace('}', '')
                 percentage = f"{row['confidence']*100:.2f}%"
-                rule = {'product_1': consequent, 'product_2': antecedent, 'percentage': percentage}
+                rule = {'product_1': consequent,
+                        'product_2': antecedent, 'percentage': percentage}
                 if row['confidence'] > 0.75:
                     rules.append(rule)
             total_rules.append({'segment': i + 1, 'rules': rules})
@@ -66,8 +75,10 @@ def upload_file():
         segments = []
         for segment in range(3):
             segment_df = df[df['Class'] == segment]
-            products = segment_df['StockCode'].value_counts().head(10).index.to_list()
-            values = segment_df['StockCode'].value_counts().head(10).values.tolist()
+            products = segment_df['StockCode'].value_counts().head(
+                10).index.to_list()
+            values = segment_df['StockCode'].value_counts().head(
+                10).values.tolist()
             segments.append({
                 'segment': segment + 1,
                 'title': 'Top 10 Products',
@@ -93,16 +104,19 @@ def upload_file():
 
         return jsonify({'message': f'Output saved as {output_filename}'}), 200
 
-@app.route('/get_output', methods=['GET'])
+
+@app.route('/associations', methods=['GET'])
 def get_output():
-    output_filename = 'association.json'
+    output_filename = 'associations.json'
     # ###############################################################
     # change the path
-    output_filepath = os.path.join("D:\SRAS", output_filename)
+    output_filepath = os.path.join(output_filename)
+    print(output_filepath)
     try:
-        return send_file(output_filepath, mimetype='application/json', as_attachment=True, download_name=output_filename)
-    except FileNotFoundError:
-        return jsonify({'error': 'Output file not found'}), 404
+        return send_file(output_filepath, mimetype='application/json', as_attachment=True)
+    except:
+        return jsonify([])
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
