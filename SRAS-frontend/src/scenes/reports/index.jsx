@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import React, { useRef, useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { getAssociationRules } from "../../services/marketingService";
 import CircularProgress from "@mui/material/CircularProgress";
 import Header from "../../components/Header";
 import ReportStatistics from "../../components/ReportStastics";
+import UploadButton from "../../components/UploadButton";
 
 const Reports = () => {
   const theme = useTheme();
@@ -16,6 +17,7 @@ const Reports = () => {
   const reportRef = useRef(null);
   const [report, setReport] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reloadFlag, setReloadFlag] = useState(0);
 
   const handleDownload = () => {
     const pdf = new jsPDF("l", "mm", "a4"); // Landscape mode
@@ -332,7 +334,7 @@ const Reports = () => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [reloadFlag]);
 
   if (loading) {
     return (
@@ -356,6 +358,7 @@ const Reports = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "80vh",
+          flexDirection: "column",
         }}
       >
         <Typography
@@ -364,6 +367,16 @@ const Reports = () => {
         >
           No reports available
         </Typography>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <UploadButton setReloadFlag={setReloadFlag} />
+        </Box>
       </Box>
     );
   }
@@ -381,7 +394,7 @@ const Reports = () => {
           margin: "1rem 0",
         }}
       />
-      {/* <Button //removed for now 
+      {/* <Button //removed for now
         className="download-btn"
         onClick={handleDownload}
         sx={{

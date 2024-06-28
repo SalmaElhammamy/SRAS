@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
 import pandas as pd
 from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import association_rules
@@ -9,6 +10,7 @@ import json
 warnings.filterwarnings("ignore", category=pd.errors.PerformanceWarning)
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
