@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 import React, { useState } from "react";
 import "../camerafeed/camerafeed.css";
 import Cards from "../../components/Cards/Cards";
@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [value, setValue] = useState("one");
-
+  const [activeTab, setActiveTab] = useState(0);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reloadFlag, setReloadFlag] = useState(0);
@@ -74,14 +74,17 @@ const Settings = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Tabs
-        value={value}
+        value={activeTab}
         onChange={handleChange}
         textColor="secondary"
         indicatorColor="secondary"
-        aria-label="secondary tabs example"
-      >
-        <Tab value="one" label="Camera Settings" />
-        <Tab value="two" label="Profile Settings" />
+        // aria-label="secondary tabs example"
+        variant="fullWidth"
+      > <Tab label={<Typography variant="h5">{"Camera Settings"}</Typography>}
+        value="one" />
+
+        <Tab label={<Typography variant="h5">{"Profile Settings"}</Typography>}
+          value="two" />
       </Tabs>
 
       <TabPanel value={value} index="one">

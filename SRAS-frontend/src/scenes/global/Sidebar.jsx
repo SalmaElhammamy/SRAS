@@ -11,6 +11,8 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import BubbleChartOutlinedIcon from '@mui/icons-material/BubbleChartOutlined';
+import PersonalVideoOutlinedIcon from '@mui/icons-material/PersonalVideoOutlined';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -45,6 +47,7 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
+        height: 2300,
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
         },
@@ -117,14 +120,14 @@ const Sidebar = () => {
             <Item
               title="Predictions"
               to="/predictions"
-              icon={<VideocamOutlinedIcon />}
+              icon={<PersonalVideoOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Heat Maps"
               to="/heat-maps"
-              icon={<VideocamOutlinedIcon />}
+              icon={<BubbleChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

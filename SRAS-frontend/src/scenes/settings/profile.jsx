@@ -4,7 +4,7 @@ import { getProfile, saveProfile } from "../../services/settingsServices";
 import { toast } from "react-toastify";
 
 const ProfileTabPanel = ({ value, index }) => {
-  const [profile, setProfile] = useState({ Name: "", email: "", _id: "" });
+  const [profile, setProfile] = useState({ name: "", email: "", _id: "" });
 
   const handleProfileChange = (prop) => (event) => {
     setProfile({ ...profile, [prop]: event.target.value });
@@ -46,28 +46,35 @@ const ProfileTabPanel = ({ value, index }) => {
       aria-labelledby={`tab-${index}`}
     >
       {value === index && (
-        <Box sx={{ p: 2 }}>
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '70vh'
+          }}
+        >
           <TextField
             label="Name"
             variant="outlined"
-            fullWidth
             value={profile.name}
             onChange={handleProfileChange("name")}
-            sx={{ mb: 4 }}
+            sx={{ mb: 5, width: '500px' }} // Optional: Adjust width as needed
           />
           <TextField
             label="Email"
             variant="outlined"
-            fullWidth
             value={profile.email}
             onChange={handleProfileChange("email")}
-            sx={{ mb: 4 }}
+            sx={{ mb: 5, width: '500px' }} // Optional: Adjust width as needed
           />
           <Button
             variant="contained"
             color="secondary"
             onClick={handleSaveProfile}
-            sx={{ mr: 2 }}
+            sx={{ mr: 0, width: '500px', height: '50px' }}
           >
             Save
           </Button>

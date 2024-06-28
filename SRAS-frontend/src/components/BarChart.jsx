@@ -51,7 +51,7 @@ const BarChart = ({ isDashboard = false, barChart }) => {
         padding={0.3}
         valueScale={{ type: "linear" }}
         indexScale={{ type: "band", round: true }}
-        colors={{ scheme: "nivo" }}
+        colors={{ scheme: "pastel1" }}
         defs={[
           {
             id: "dots",
@@ -66,7 +66,7 @@ const BarChart = ({ isDashboard = false, barChart }) => {
             id: "lines",
             type: "patternLines",
             background: "inherit",
-            color: "#eed312",
+            color: "#e ed312",
             rotation: -45,
             lineWidth: 6,
             spacing: 10,
