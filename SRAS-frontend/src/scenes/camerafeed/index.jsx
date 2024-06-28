@@ -60,7 +60,14 @@ const Camerafeed = ({ withInference = false }) => {
   return (
     <Box>
       <Box>
-        <Header />
+        <Header
+          title={
+            withInference ? "Camera Live Feed Prediction" : "Camera Live Feed"
+          }
+          sx={{
+            marginLeft: "1rem",
+          }}
+        />
         <Cards cards={cards} />
       </Box>
     </Box>

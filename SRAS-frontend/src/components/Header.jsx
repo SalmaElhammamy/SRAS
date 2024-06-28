@@ -1,11 +1,16 @@
 import { Typography, Box, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 
-const Header = ({ title, subtitle }) => {
+const Header = ({ title, subtitle, sx }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
-    <Box mb="30px">
+    <Box
+      mb="30px"
+      sx={{
+        ...sx,
+      }}
+    >
       <Typography
         variant="h2"
         color={colors.grey[100]}

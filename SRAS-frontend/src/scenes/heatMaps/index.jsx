@@ -59,7 +59,12 @@ const HeatMaps = () => {
   return (
     <Box>
       <Box>
-        <Header />
+        <Header
+          title="Heat Maps"
+          sx={{
+            marginLeft: "1rem",
+          }}
+        />
         <Cards cards={cards} />
       </Box>
     </Box>
