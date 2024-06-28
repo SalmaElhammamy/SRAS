@@ -49,11 +49,11 @@ const ProfileTabPanel = ({ value, index }) => {
         <Box
           sx={{
             p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '70vh'
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "70vh",
           }}
         >
           <TextField
@@ -61,20 +61,22 @@ const ProfileTabPanel = ({ value, index }) => {
             variant="outlined"
             value={profile.name}
             onChange={handleProfileChange("name")}
-            sx={{ mb: 5, width: '500px' }} // Optional: Adjust width as needed
+            sx={{ mb: 5, width: "500px" }} // Optional: Adjust width as needed
+            color="secondary"
           />
           <TextField
             label="Email"
             variant="outlined"
             value={profile.email}
             onChange={handleProfileChange("email")}
-            sx={{ mb: 5, width: '500px' }} // Optional: Adjust width as needed
+            sx={{ mb: 5, width: "500px" }} // Optional: Adjust width as needed
+            color="secondary"
           />
           <Button
             variant="contained"
             color="secondary"
             onClick={handleSaveProfile}
-            sx={{ mr: 0, width: '500px', height: '50px' }}
+            sx={{ mr: 0, width: "500px", height: "50px" }}
           >
             Save
           </Button>

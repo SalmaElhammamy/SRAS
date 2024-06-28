@@ -10,7 +10,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const [value, setValue] = useState("one");
   const [activeTab, setActiveTab] = useState(0);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,7 @@ const Settings = () => {
   const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setActiveTab(newValue);
   };
 
   useEffect(() => {
@@ -72,22 +71,25 @@ const Settings = () => {
     );
   }
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box>
       <Tabs
         value={activeTab}
         onChange={handleChange}
         textColor="secondary"
         indicatorColor="secondary"
-        // aria-label="secondary tabs example"
         variant="fullWidth"
-      > <Tab label={<Typography variant="h5">{"Camera Settings"}</Typography>}
-        value="one" />
-
-        <Tab label={<Typography variant="h5">{"Profile Settings"}</Typography>}
-          value="two" />
+      >
+        <Tab
+          label={<Typography variant="h5">{"Camera Settings"}</Typography>}
+          value={0}
+        />
+        <Tab
+          label={<Typography variant="h5">{"Profile Settings"}</Typography>}
+          value={1}
+        />
       </Tabs>
 
-      <TabPanel value={value} index="one">
+      <TabPanel value={activeTab} index={0}>
         <Box sx={{ p: 2 }}>
           <Box>
             <Box>
@@ -101,7 +103,7 @@ const Settings = () => {
         </Box>
       </TabPanel>
 
-      <ProfileTabPanel value={value} index="two" />
+      <ProfileTabPanel value={activeTab} index={1} />
     </Box>
   );
 };
