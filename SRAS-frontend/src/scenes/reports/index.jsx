@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { getAssociationRules } from "../../services/marketingService";
 import CircularProgress from "@mui/material/CircularProgress";
 import Header from "../../components/Header";
+import ReportStatistics from "../../components/ReportStastics";
 
 const Reports = () => {
   const theme = useTheme();
@@ -333,7 +334,6 @@ const Reports = () => {
     })();
   }, []);
 
-  console.log(report);
   if (loading) {
     return (
       <Box
@@ -398,31 +398,14 @@ const Reports = () => {
       <Box ref={reportRef} padding={"1rem"}>
         {report.association_rules.map((data, dataIndex) => (
           <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: "bold", marginBottom: "10px" }}
-            >
-              Segment {data.segment}
-            </Typography>
-            {data.rules.map((rule, ruleIndex) => (
-              <Typography
-                key={`${rule.product_1}-${rule.product_2}-${ruleIndex}`}
-                sx={{
-                  marginBottom: "8px",
-                  fontSize: "16px",
-                  lineHeight: "1.5",
-                }}
-              >
-                Product(s) with id {rule.product_1} appear in {rule.percentage}{" "}
-                of transactions where product(s) with id {rule.product_2}{" "}
-                appeared
-              </Typography>
-            ))}
+            <ReportStatistics
+              title={`Segment ${data.segment}`}
+              barCharts={report.top_products[dataIndex].barChart}
+              rules={data.rules}
+            />
           </Box>
         ))}
       </Box>
-
-      <Divider sx={{ marginBottom: "20px" }} />
     </Box>
   );
 };
