@@ -22,7 +22,6 @@ def upload_file():
         return jsonify({'error': 'No file part'}), 400
 
     file = request.files['file']
-
     if not file.filename.endswith('.csv'):
         return jsonify({'error': 'Only CSV files are allowed'}), 400
 
@@ -31,16 +30,17 @@ def upload_file():
 
     if file:
         # Save the uploaded file
-        filepath = os.path.join("D:\SRAS", file.filename)
+        filepath = os.path.join(
+            "SRAS-marketing-service/Uploads", file.filename)
         file.save(filepath)
 
-        # Process the CSV file
         df = pd.read_csv(filepath)
         df['StockCode'] = df['StockCode'].astype("str")
 
         # Generate association rules
         total_rules = []
         for i in range(3):
+            print(i, "stage 1")
             segment = (df[df['Class'] == i])[['InvoiceNo', 'StockCode']].groupby(
                 'InvoiceNo')['StockCode'].agg(list).reset_index().set_index('InvoiceNo')
             unique_products = set(
@@ -48,12 +48,12 @@ def upload_file():
             for product in unique_products:
                 segment[product] = segment["StockCode"].apply(
                     lambda x: 1 if product in x else 0)
-
+            print(i, "stage 2")
             segment.drop(columns=['StockCode'], inplace=True)
             for c in segment.columns:
                 segment[c] = segment[c].astype("bool")
             res = fpgrowth(segment, min_support=0.02, use_colnames=True)
-
+            print(i, "stage 3")
             res = association_rules(
                 res, metric="confidence", min_threshold=0.5)
             sorted_results = res.sort_values(by="lift", ascending=False)
@@ -70,6 +70,7 @@ def upload_file():
                 if row['confidence'] > 0.75:
                     rules.append(rule)
             total_rules.append({'segment': i + 1, 'rules': rules})
+            print(i, "stage 4")
 
         # Generate top 10 products for each segment
         segments = []
@@ -88,17 +89,26 @@ def upload_file():
                 'values': values
             })
 
+        transformed_segments = [
+            {
+                "title": f"Segment {data['segment']}",
+                "barChart": [{"x_value": product, "y_value": value} for product, value in zip(data["products"], data["values"])]
+            }
+            for data in segments
+        ]
+
         # Prepare the response
         response = {
             'association_rules': total_rules,
-            'top_products': segments
+            'top_products': transformed_segments
         }
 
         # Save response to a JSON file
-        output_filename = 'association.json'
+        output_filename = 'associations.json'
         # ###############################################################
         # change the path
-        output_filepath = os.path.join("D:\SRAS", output_filename)
+        output_filepath = os.path.join(
+            "SRAS-marketing-service/Outputs", output_filename)
         with open(output_filepath, 'w') as f:
             json.dump(response, f, indent=4)
 
@@ -108,10 +118,8 @@ def upload_file():
 @app.route('/associations', methods=['GET'])
 def get_output():
     output_filename = 'associations.json'
-    # ###############################################################
-    # change the path
-    output_filepath = os.path.join(output_filename)
-    print(output_filepath)
+    output_filepath = os.path.join(
+        "Outputs", output_filename)
     try:
         return send_file(output_filepath, mimetype='application/json', as_attachment=True)
     except:
@@ -119,4 +127,4 @@ def get_output():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)

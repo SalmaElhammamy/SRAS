@@ -1,4 +1,4 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Divider, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import React, { useRef, useEffect, useState } from "react";
@@ -69,130 +69,271 @@ const Reports = () => {
       try {
         const response = await getAssociationRules();
         setReport(response.data);
-        setLoading(false);
       } catch (error) {
         toast.error("Failed to load reports, please try again later.");
-        setReport([
-          {
-            segment: 1,
-            rules: [
-              {
-                product_1: "('22697')",
-                product_2: "('22699', '22423')",
-                percentage: "84.62%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22697', '22423')",
-                percentage: "80.00%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22698')",
-                percentage: "79.66%",
-              },
-              {
-                product_1: "('22697')",
-                product_2: "('22698')",
-                percentage: "79.66%",
-              },
-              {
-                product_1: "('85123A')",
-                product_2: "('22804')",
-                percentage: "79.25%",
-              },
-            ],
-          },
-          {
-            segment: 2,
-            rules: [
-              {
-                product_1: "('22697')",
-                product_2: "('22698')",
-                percentage: "79.26%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22697')",
-                percentage: "75.85%",
-              },
-            ],
-          },
-          {
-            segment: 3,
-            rules: [
-              {
-                product_1: "('23266')",
-                product_2: "('23264')",
-                percentage: "80.00%",
-              },
-              {
-                product_1: "('23264')",
-                product_2: "('23266')",
-                percentage: "82.35%",
-              },
-              {
-                product_1: "('23170')",
-                product_2: "('23171')",
-                percentage: "86.49%",
-              },
-              {
-                product_1: "('22697', '22699')",
-                product_2: "('22698')",
-                percentage: "77.78%",
-              },
-              {
-                product_1: "('22698')",
-                product_2: "('22697', '22699')",
-                percentage: "77.78%",
-              },
-              {
-                product_1: "('22697')",
-                product_2: "('22698', '22699')",
-                percentage: "89.74%",
-              },
-              {
-                product_1: "('22697')",
-                product_2: "('22698')",
-                percentage: "84.44%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22697', '22423')",
-                percentage: "96.67%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22698', '22423')",
-                percentage: "96.55%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22698', '22697')",
-                percentage: "92.11%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22698')",
-                percentage: "86.67%",
-              },
-              {
-                product_1: "('22699')",
-                product_2: "('22697')",
-                percentage: "84.91%",
-              },
-              {
-                product_1: "('85099B')",
-                product_2: "('85099F', '22386')",
-                percentage: "75.68%",
-              },
-            ],
-          },
-        ]);
+        setReport({
+          association_rules: [
+            {
+              segment: 1,
+              rules: [
+                {
+                  product_1: "('22697')",
+                  product_2: "('22699', '22423')",
+                  percentage: "84.62%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22697', '22423')",
+                  percentage: "80.00%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22698')",
+                  percentage: "79.66%",
+                },
+                {
+                  product_1: "('22697')",
+                  product_2: "('22698')",
+                  percentage: "79.66%",
+                },
+                {
+                  product_1: "('85123A')",
+                  product_2: "('22804')",
+                  percentage: "79.25%",
+                },
+              ],
+            },
+            {
+              segment: 2,
+              rules: [
+                {
+                  product_1: "('22697')",
+                  product_2: "('22698')",
+                  percentage: "79.26%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22697')",
+                  percentage: "75.85%",
+                },
+              ],
+            },
+            {
+              segment: 3,
+              rules: [
+                {
+                  product_1: "('23266')",
+                  product_2: "('23264')",
+                  percentage: "80.00%",
+                },
+                {
+                  product_1: "('23264')",
+                  product_2: "('23266')",
+                  percentage: "82.35%",
+                },
+                {
+                  product_1: "('23170')",
+                  product_2: "('23171')",
+                  percentage: "86.49%",
+                },
+                {
+                  product_1: "('22697', '22699')",
+                  product_2: "('22698')",
+                  percentage: "77.78%",
+                },
+                {
+                  product_1: "('22698')",
+                  product_2: "('22697', '22699')",
+                  percentage: "77.78%",
+                },
+                {
+                  product_1: "('22697')",
+                  product_2: "('22699', '22698')",
+                  percentage: "89.74%",
+                },
+                {
+                  product_1: "('22697')",
+                  product_2: "('22698')",
+                  percentage: "84.44%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22697', '22423')",
+                  percentage: "96.67%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22698', '22423')",
+                  percentage: "96.55%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22697', '22698')",
+                  percentage: "92.11%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22698')",
+                  percentage: "86.67%",
+                },
+                {
+                  product_1: "('22699')",
+                  product_2: "('22697')",
+                  percentage: "84.91%",
+                },
+                {
+                  product_1: "('85099B')",
+                  product_2: "('22386', '85099F')",
+                  percentage: "75.68%",
+                },
+              ],
+            },
+          ],
+          top_products: [
+            {
+              title: "Segment 1",
+              barChart: [
+                {
+                  x_value: "85123A",
+                  y_value: 244,
+                },
+                {
+                  x_value: "22423",
+                  y_value: 217,
+                },
+                {
+                  x_value: "47566",
+                  y_value: 151,
+                },
+                {
+                  x_value: "84879",
+                  y_value: 140,
+                },
+                {
+                  x_value: "21034",
+                  y_value: 126,
+                },
+                {
+                  x_value: "22960",
+                  y_value: 126,
+                },
+                {
+                  x_value: "22720",
+                  y_value: 113,
+                },
+                {
+                  x_value: "22457",
+                  y_value: 113,
+                },
+                {
+                  x_value: "22469",
+                  y_value: 104,
+                },
+                {
+                  x_value: "POST",
+                  y_value: 98,
+                },
+              ],
+            },
+            {
+              title: "Segment 2",
+              barChart: [
+                {
+                  x_value: "85123A",
+                  y_value: 1729,
+                },
+                {
+                  x_value: "22423",
+                  y_value: 1566,
+                },
+                {
+                  x_value: "85099B",
+                  y_value: 1448,
+                },
+                {
+                  x_value: "84879",
+                  y_value: 1233,
+                },
+                {
+                  x_value: "47566",
+                  y_value: 1196,
+                },
+                {
+                  x_value: "20725",
+                  y_value: 1190,
+                },
+                {
+                  x_value: "POST",
+                  y_value: 1068,
+                },
+                {
+                  x_value: "22720",
+                  y_value: 1043,
+                },
+                {
+                  x_value: "23203",
+                  y_value: 1033,
+                },
+                {
+                  x_value: "20727",
+                  y_value: 979,
+                },
+              ],
+            },
+            {
+              title: "Segment 3",
+              barChart: [
+                {
+                  x_value: "85099B",
+                  y_value: 141,
+                },
+                {
+                  x_value: "22423",
+                  y_value: 122,
+                },
+                {
+                  x_value: "85123A",
+                  y_value: 104,
+                },
+                {
+                  x_value: "20725",
+                  y_value: 100,
+                },
+                {
+                  x_value: "C2",
+                  y_value: 98,
+                },
+                {
+                  x_value: "79321",
+                  y_value: 98,
+                },
+                {
+                  x_value: "20727",
+                  y_value: 92,
+                },
+                {
+                  x_value: "22386",
+                  y_value: 91,
+                },
+                {
+                  x_value: "22197",
+                  y_value: 91,
+                },
+                {
+                  x_value: "22467",
+                  y_value: 83,
+                },
+              ],
+            },
+          ],
+        });
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
 
+  console.log(report);
   if (loading) {
     return (
       <Box
@@ -233,7 +374,12 @@ const Reports = () => {
         sx={{
           marginLeft: "1rem",
         }}
-        subtitle="Generated Association Rules From Provided Data"
+        subtitle="Generated Association Rules And Top Products"
+      />
+      <Divider
+        sx={{
+          margin: "1rem 0",
+        }}
       />
       {/* <Button //removed for now 
         className="download-btn"
@@ -249,8 +395,8 @@ const Reports = () => {
         Download Reports
       </Button> */}
 
-      <Box ref={reportRef} sx={{ padding: "20px" }}>
-        {report.map((data, dataIndex) => (
+      <Box ref={reportRef} padding={"1rem"}>
+        {report.association_rules.map((data, dataIndex) => (
           <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
             <Typography
               variant="h6"
@@ -275,6 +421,8 @@ const Reports = () => {
           </Box>
         ))}
       </Box>
+
+      <Divider sx={{ marginBottom: "20px" }} />
     </Box>
   );
 };
