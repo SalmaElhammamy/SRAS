@@ -100,11 +100,10 @@ const parseData = (data) => {
   return data.map((zone) => {
     return {
       title: `Zone ${zone.ZoneId}`,
-      x_values: ["AverageTimeInZone", "AveragePeopleInZone", "MaxPeopleInZone"],
-      y_values: [
-        zone.AverageTimeInZone,
-        zone.AveragePeopleInZone,
-        zone.MaxPeopleInZone,
+      barChart: [
+        { x_value: "AVG TIME", y_value: zone.AverageTimeInZone },
+        { x_value: "AVG PEOPLE", y_value: zone.AveragePeopleInZone },
+        { x_value: "MAX PEOPLE", y_value: zone.MaxPeopleInZone },
       ],
     };
   });
@@ -146,21 +145,31 @@ export const FetchMetrics = async (req, res) => {
     const weeklyAverages = calculateAverages(thisWeekMetrics);
     const monthlyAverages = calculateAverages(thisMonthMetrics);
 
-    res.status(200).json([
-      {
-        title: "Last 5 minutes",
-        data: todayLastMetrics?.Zones ? parseData(todayLastMetrics.Zones) : [],
-      },
-      {
+    let response = [];
+    if (todayLastMetrics) {
+      response.push({
+        title: "Today",
+        data: parseData(todayLastMetrics.Zones),
+      });
+    }
+
+    if (weeklyAverages.length > 0) {
+      response.push({
         title: "This Week",
         data: parseData(weeklyAverages),
-      },
-      {
+      });
+    }
+
+    if (monthlyAverages.length > 0) {
+      response.push({
         title: "This Month",
         data: parseData(monthlyAverages),
-      },
-    ]);
+      });
+    }
+
+    res.status(200).json(response);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

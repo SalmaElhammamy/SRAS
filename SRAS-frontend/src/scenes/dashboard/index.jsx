@@ -5,6 +5,7 @@ import { getDriversData } from "../../services/dashboardServices";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import CameraMetrics from "../../components/CameraMetrics/CameraMetrics";
+import Comp from "../../components/Comp";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);

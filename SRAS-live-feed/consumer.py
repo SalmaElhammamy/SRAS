@@ -154,7 +154,7 @@ class Worker(ConsumerMixin):
 
         Config.frames[self.driver] = jpeg_frame.tobytes()
 
-        message.ack()
+        # message.ack()
 
 
 class WorkerWithInference(Worker):
@@ -196,11 +196,13 @@ class WorkerWithInference(Worker):
         self.people_counts = {i: [] for i in range(len(self.zones))}
 
     def on_message(self, body, message):
-        message.ack()
+
         size = sys.getsizeof(body) - 33
         np_array = np.frombuffer(body, dtype=np.uint8)
         np_array = np_array.reshape((size, 1))
         frame = cv2.imdecode(np_array, 1)
+
+        message.ack()
 
         if self.first_frame is None:
             self.first_frame = frame.copy()
@@ -219,7 +221,6 @@ class WorkerWithInference(Worker):
         )[0]
 
         detections = sv.Detections.from_ultralytics(results)
-        detections = detections[find_in_list(detections.class_id, [0])]
         detections = tracker.update_with_detections(detections)
 
         if detections.tracker_id is not None or len(detections.tracker_id) != 0:
@@ -235,6 +236,7 @@ class WorkerWithInference(Worker):
             try:
                 detections_in_zone = detections[zone.trigger(detections)]
             except:
+                print(f"Error in detections, driver id: {self.driver}")
                 continue
 
             if self.is_triggered and is_after_9pm():
@@ -271,7 +273,7 @@ class WorkerWithInference(Worker):
         _, jpeg_frame = cv2.imencode('.jpg', annotated_frame)
 
         elapsed_time = time.time() - self.start_time
-        if elapsed_time >= 60 * 5:
+        if elapsed_time >= 10:
             send_metrics(self.total_times_in_zones,
                          self.people_counts, self.zones, self.driver)
             self.start_time = time.time()
@@ -375,10 +377,14 @@ def video_feed_inference(driver_uuid):
 
 @app.route('/update-coordinates')
 def update_coordinates():
-    Config.polygons = {driver: get_coordinates(
-        driver) for driver in Config.camera_drivers}
+
+    for driver in Config.camera_drivers:
+        Config.polygons[driver], Config.is_triggered[driver] = get_coordinates(
+            driver)
+
     for inference_consumer in inference_consumers:
         inference_consumer.update_coordinates()
+
     return "Coordinates updated"
 
 

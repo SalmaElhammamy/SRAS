@@ -1,29 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, TextField } from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import { sendEmail as sendEmailService } from "../../services/settingsServices";
+import { getProfile, saveProfile } from "../../services/settingsServices";
 import { toast } from "react-toastify";
-const ProfileTabPanel = ({
-  value,
-  index,
-  profile,
-  handleProfileChange,
-  handleSaveProfile,
-}) => {
-  const sendEmail = async () => {
-    const { email } = profile;
-    sendEmailService({
-      email,
-      subject: "SRAS",
-      body: "Test",
-    })
-      .then((response) => {
-        toast.success("Email sent successfully");
-      })
-      .catch((error) => {
-        toast.error("Failed to send email");
-      });
+
+const ProfileTabPanel = ({ value, index }) => {
+  const [profile, setProfile] = useState({ name: "", email: "", _id: "" });
+
+  const handleProfileChange = (prop) => (event) => {
+    setProfile({ ...profile, [prop]: event.target.value });
   };
+
+  const handleSaveProfile = async () => {
+    try {
+      await saveProfile({
+        FullName: profile.name,
+        Email: profile.email,
+        _id: profile._id,
+      });
+      toast.success("Profile saved successfully.");
+    } catch (error) {
+      toast.error("Failed to save profile, please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getProfile();
+        setProfile({
+          name: response.data.FullName,
+          email: response.data.Email,
+          _id: response.data._id,
+        });
+      } catch (error) {
+        toast.error("Failed to load profile, please try again later.");
+      }
+    })();
+  }, []);
 
   return (
     <div
@@ -33,34 +46,39 @@ const ProfileTabPanel = ({
       aria-labelledby={`tab-${index}`}
     >
       {value === index && (
-        <Box sx={{ p: 2 }}>
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "70vh",
+          }}
+        >
           <TextField
             label="Name"
             variant="outlined"
-            fullWidth
             value={profile.name}
             onChange={handleProfileChange("name")}
-            sx={{ mb: 4 }}
+            sx={{ mb: 5, width: "500px" }} // Optional: Adjust width as needed
+            color="secondary"
           />
           <TextField
             label="Email"
             variant="outlined"
-            fullWidth
             value={profile.email}
             onChange={handleProfileChange("email")}
-            sx={{ mb: 4 }}
+            sx={{ mb: 5, width: "500px" }} // Optional: Adjust width as needed
+            color="secondary"
           />
           <Button
             variant="contained"
             color="secondary"
             onClick={handleSaveProfile}
-            sx={{ mr: 2 }}
+            sx={{ mr: 0, width: "500px", height: "50px" }}
           >
             Save
-          </Button>
-          <Button variant="contained" color="secondary" onClick={sendEmail}>
-            <MailOutlineIcon sx={{ mr: "10px" }} />
-            Send Email
           </Button>
         </Box>
       )}

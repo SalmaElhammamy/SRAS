@@ -6,7 +6,7 @@ export const FetchSettings = async (req, res) => {
     if (settings.length == 0) {
       return res.status(404).json({ message: "Settings not found" });
     }
-    res.status(200).json(settings);
+    res.status(200).json(settings[0]);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -46,7 +46,6 @@ export const createOrUpdateSettings = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 export const DeleteSettings = async (req, res) => {
   try {

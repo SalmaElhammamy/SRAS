@@ -13,16 +13,15 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface ReportProps {
+export interface ReportTemplateProps {
   Name: string;
 }
 
-export const ReportTemplate = ({ Name }: ReportProps) => {
+export const ReportTemplate = ({ Name }: ReportTemplateProps) => {
   const formattedDate = new Intl.DateTimeFormat("en", {
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date());
-
   return (
     <Html>
       <Head />
@@ -86,7 +85,7 @@ export const ReportTemplate = ({ Name }: ReportProps) => {
     </Html>
   );
 };
-
+ReportTemplate.Subject = "Daily Report";
 const main = {
   backgroundColor: "#fff",
   fontFamily:
