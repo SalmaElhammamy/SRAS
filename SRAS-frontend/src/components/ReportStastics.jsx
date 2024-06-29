@@ -1,7 +1,6 @@
 import { Box, useTheme, Typography, Grid } from "@mui/material";
 import { tokens } from "../theme";
 import BarChart from "./BarChart";
-import { useMode } from "../theme";
 
 const ReportStatistics = ({ title, barCharts, rules }) => {
   const theme = useTheme();

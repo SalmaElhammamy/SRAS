@@ -1,4 +1,4 @@
-import { Box, Divider, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Typography, useTheme, Tabs, Tab } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import React, { useRef, useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import ReportStatistics from "../../components/ReportStastics";
 import UploadButton from "../../components/UploadButton";
 
 const Reports = () => {
+  const [activeTab, setActiveTab] = useState(0);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const reportRef = useRef(null);
@@ -65,6 +66,10 @@ const Reports = () => {
     });
 
     pdf.save("report.pdf");
+  };
+
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   useEffect(() => {
@@ -387,26 +392,67 @@ const Reports = () => {
         sx={{
           marginLeft: "1rem",
         }}
-        subtitle="Generated Association Rules And Top Products"
+        subtitle="Generated Association Rules, Top Products and Demand Forecasting"
       />
       <Divider
         sx={{
           margin: "1rem 0",
         }}
       />
-
-      <Box ref={reportRef} padding={"1rem"} id="report-statistics">
-        {report.association_rules.map((data, dataIndex) => (
-          <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
-            <ReportStatistics
-              title={`Segment ${data.segment}`}
-              barCharts={report.top_products[dataIndex].barChart}
-              rules={data.rules}
-            />
-          </Box>
-        ))}
+      <Box>
+        <Tabs
+          value={activeTab}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          variant="fullWidth"
+        >
+          <Tab
+            label={
+              <Typography variant="h5">
+                {"Association Rules and Top Products"}
+              </Typography>
+            }
+            value={0}
+          />
+          <Tab
+            label={<Typography variant="h5">{"Demand Forecasting"}</Typography>}
+            value={1}
+          />
+        </Tabs>
       </Box>
+      <TabPanel value={activeTab} index={0}>
+        <Box ref={reportRef} padding={"1rem"} id="report-statistics">
+          {report.association_rules.map((data, dataIndex) => (
+            <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
+              <ReportStatistics
+                title={`Segment ${data.segment}`}
+                barCharts={report.top_products[dataIndex].barChart}
+                rules={data.rules}
+              />
+            </Box>
+          ))}
+        </Box>
+      </TabPanel>
+      <TabPanel value={activeTab} index={1}>
+        <Box ref={reportRef} padding={"1rem"} id="report-statistics">
+          TBD
+        </Box>
+      </TabPanel>
     </Box>
+  );
+};
+
+const TabPanel = ({ children, value, index }) => {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
   );
 };
 
