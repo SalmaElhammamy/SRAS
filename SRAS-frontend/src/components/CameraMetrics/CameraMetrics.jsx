@@ -138,7 +138,7 @@ const RenderCameraMetrics = (driverId) => {
     );
   }
   return (
-    <Box m="20px" id="camera-metrics">
+    <Box m="20px">
       {cameraMetrics.map((cameraMetric, index) => (
         <Comp
           key={index}

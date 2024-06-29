@@ -421,8 +421,8 @@ const Reports = () => {
           />
         </Tabs>
       </Box>
-      <TabPanel value={activeTab} index={0}>
-        <Box ref={reportRef} padding={"1rem"} id="report-statistics">
+      <TabPanel value={activeTab} index={0} id="report-statistics">
+        <Box ref={reportRef} padding={"1rem"}>
           {report.association_rules.map((data, dataIndex) => (
             <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
               <ReportStatistics
@@ -443,7 +443,7 @@ const Reports = () => {
   );
 };
 
-const TabPanel = ({ children, value, index }) => {
+const TabPanel = ({ children, value, index, id }) => {
   return (
     <div
       role="tabpanel"
@@ -451,7 +451,11 @@ const TabPanel = ({ children, value, index }) => {
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && (
+        <Box sx={{ p: 3 }} id={`${id}`}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 };

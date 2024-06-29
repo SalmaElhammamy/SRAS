@@ -80,12 +80,14 @@ const Dashboard = () => {
           ))}
         </Tabs>
         {driversData.map((driver) => (
-          <CameraMetrics
-            key={driver.DriverId}
-            driverId={driver.DriverId}
-            value={activeTab}
-            index={driver.DriverId}
-          />
+          <Box id="camera-metrics">
+            <CameraMetrics
+              key={driver.DriverId}
+              driverId={driver.DriverId}
+              value={activeTab}
+              index={driver.DriverId}
+            />
+          </Box>
         ))}
       </Box>
     </Box>
