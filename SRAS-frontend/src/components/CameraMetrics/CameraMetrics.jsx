@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { getCameraData } from "../../services/dashboardServices";
 import { Box, Typography, useTheme } from "@mui/material";
 import Comp from "../Comp";
-
 import { tokens } from "../../theme.js";
 
 const RenderCameraMetrics = (driverId) => {
