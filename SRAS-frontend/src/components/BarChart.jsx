@@ -3,7 +3,7 @@ import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
 import { Box } from "@mui/material";
 
-const BarChart = ({ isDashboard = false, barChart, title }) => {
+const BarChart = ({ isDashboard = false, barChart, title="" }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 

@@ -19,11 +19,13 @@ const ReportStatistics = ({ title, barCharts, rules }) => {
       <Grid item xs={12}>
         <Box>
           <Typography
-            variant="h3"
+            variant="h2"
             fontWeight="600"
             sx={{
               paddingLeft: "1rem",
               textAlign: "center",
+              marginTop: "1rem",
+              marginBottom: "1.5rem"
             }}
           >
             {title}
@@ -35,13 +37,14 @@ const ReportStatistics = ({ title, barCharts, rules }) => {
           <Typography
             key={`${rule.product_1}-${rule.product_2}-${ruleIndex}`}
             sx={{
-              marginBottom: "8px",
-              fontSize: "16px",
+              marginLeft: "40px",
+              marginBottom: "16px",
+              fontSize: "24px",
               lineHeight: "1.5",
             }}
-          >
-            Product(s) with id {rule.product_1} appear in {rule.percentage} of
-            transactions where product(s) with id {rule.product_2} appeared
+          > <Box sx={{ display: "inline !important", marginRight: "10px" }}>•</Box>
+            Product(s) with id <Typography sx={{ display: "inline !important", fontWeight: "bold", fontSize: "1.5rem" }} color={colors.greenAccent[500]}> {rule.product_1} </Typography> appear in <Typography sx={{ display: "inline !important", fontWeight: "bold", fontSize: "1.5rem" }} color={"secondary"}>{rule.percentage} </Typography>of
+            transactions where product(s) with id <Typography sx={{ display: "inline !important", fontWeight: "bold", fontSize: "1.5rem" }} color={colors.greenAccent[500]}> {rule.product_2} </Typography> appeared
           </Typography>
         ))}
         <Box
@@ -49,7 +52,13 @@ const ReportStatistics = ({ title, barCharts, rules }) => {
             height: "60vh",
           }}
         >
-          <BarChart barChart={barCharts} title="Top 10 products" />
+          <Box sx={{
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}>
+
+            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem", marginBottom:"-50px" }} color={"secondary"}  >Top 10 products</Typography>
+          </Box>
+          <BarChart barChart={barCharts} />
         </Box>
       </Grid>
     </Grid>
