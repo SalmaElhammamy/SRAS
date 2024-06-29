@@ -16,10 +16,15 @@ import Settings from "./scenes/settings";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 // import Calendar from "./scenes/calendar/calendar";
+import LineChart from "./components/LineChart";
+import { Box } from "@mui/material";
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+
+  // const theme_ = useTheme();
+  // const colors = tokens(theme_.palette.mode);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -42,6 +47,28 @@ function App() {
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/settings" element={<Settings />} />
+              <Route
+                path="/demand"
+                element={
+                  <Box
+                    sx={{
+                      padding: "1rem",
+                    }}
+                    id="demand"
+                  >
+                    <Box
+                      sx={{
+                        boxShadow: `0px 0px 10px 0px #000`,
+                        marginBottom: "5rem",
+                        borderRadius: "1rem",
+                        height: "80vh",
+                      }}
+                    >
+                      <LineChart />
+                    </Box>
+                  </Box>
+                }
+              />
             </Routes>
           </main>
         </div>
