@@ -154,7 +154,7 @@ class Worker(ConsumerMixin):
 
         Config.frames[self.driver] = jpeg_frame.tobytes()
 
-        message.ack()
+        # message.ack()
 
 
 class WorkerWithInference(Worker):
@@ -196,11 +196,13 @@ class WorkerWithInference(Worker):
         self.people_counts = {i: [] for i in range(len(self.zones))}
 
     def on_message(self, body, message):
-        message.ack()
+
         size = sys.getsizeof(body) - 33
         np_array = np.frombuffer(body, dtype=np.uint8)
         np_array = np_array.reshape((size, 1))
         frame = cv2.imdecode(np_array, 1)
+
+        message.ack()
 
         if self.first_frame is None:
             self.first_frame = frame.copy()
@@ -219,7 +221,6 @@ class WorkerWithInference(Worker):
         )[0]
 
         detections = sv.Detections.from_ultralytics(results)
-        detections = detections[find_in_list(detections.class_id, [0])]
         detections = tracker.update_with_detections(detections)
 
         if detections.tracker_id is not None or len(detections.tracker_id) != 0:
@@ -235,6 +236,7 @@ class WorkerWithInference(Worker):
             try:
                 detections_in_zone = detections[zone.trigger(detections)]
             except:
+                print(f"Error in detections, driver id: {self.driver}")
                 continue
 
             if self.is_triggered and is_after_9pm():

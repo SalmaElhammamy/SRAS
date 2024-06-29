@@ -12,7 +12,7 @@ const ReportStatistics = ({ title, barCharts, rules }) => {
       container
       spacing={2}
       sx={{
-        boxShadow: "0px 0px 10px 0px rgba(255, 255, 255,0.5)",
+        boxShadow: `0px 0px 10px 0px ${colors.shadow[100]}`,
         marginBottom: "5rem",
         borderRadius: "1rem",
       }}

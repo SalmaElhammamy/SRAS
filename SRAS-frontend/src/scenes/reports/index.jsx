@@ -394,21 +394,8 @@ const Reports = () => {
           margin: "1rem 0",
         }}
       />
-      {/* <Button //removed for now
-        className="download-btn"
-        onClick={handleDownload}
-        sx={{
-          backgroundColor: colors.redAccent[500],
-          color: colors.grey[100],
-          padding: "10px 10px",
-          marginBottom: "15px",
-        }}
-      >
-        <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-        Download Reports
-      </Button> */}
 
-      <Box ref={reportRef} padding={"1rem"}>
+      <Box ref={reportRef} padding={"1rem"} id="report-statistics">
         {report.association_rules.map((data, dataIndex) => (
           <Box key={dataIndex} sx={{ marginBottom: "20px" }}>
             <ReportStatistics
