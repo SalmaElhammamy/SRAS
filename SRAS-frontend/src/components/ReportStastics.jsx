@@ -50,7 +50,7 @@ const ReportStatistics = ({ title, barCharts, rules }) => {
             height: "60vh",
           }}
         >
-          <BarChart barChart={barCharts} />
+          <BarChart barChart={barCharts} title="Top 10 products" />
         </Box>
       </Grid>
     </Grid>
