@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
@@ -11,6 +11,8 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import BubbleChartOutlinedIcon from "@mui/icons-material/BubbleChartOutlined";
+import PersonalVideoOutlinedIcon from "@mui/icons-material/PersonalVideoOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -45,6 +47,7 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
+        height: 2300,
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
         },
@@ -108,15 +111,23 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Camera Feed"
-              to="/camerafeed"
+              to="/camera-feed"
               icon={<VideocamOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+
             <Item
               title="Predictions"
-              to="/camerafeedinference"
-              icon={<VideocamOutlinedIcon />}
+              to="/predictions"
+              icon={<PersonalVideoOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Heat Maps"
+              to="/heat-maps"
+              icon={<BubbleChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -128,7 +139,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
-            <Typography
+            {/* <Typography
               variant="h4"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
@@ -151,14 +162,14 @@ const Sidebar = () => {
               icon={<PieChartOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <Item
+            />*/}
+            {/* <Item
               title="Line Chart"
               to="/line"
               icon={<TimelineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            />  */}
           </Box>
         </Menu>
       </ProSidebar>

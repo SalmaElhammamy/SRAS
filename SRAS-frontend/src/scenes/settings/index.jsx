@@ -1,81 +1,109 @@
-import { Box, Button, useTheme, Tabs, Tab, TextField } from "@mui/material";
-import { tokens } from "../../theme";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 import React, { useState } from "react";
 import "../camerafeed/camerafeed.css";
 import Cards from "../../components/Cards/Cards";
 import ProfileTabPanel from "./profile";
 import { useEffect } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
+import { toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const [value, setValue] = useState("one");
-  const [profile, setProfile] = useState({ name: "", email: "" });
-
+  const [activeTab, setActiveTab] = useState(0);
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [reloadFlag, setReloadFlag] = useState(0);
+  const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleProfileChange = (prop) => (event) => {
-    setProfile({ ...profile, [prop]: event.target.value });
-  };
-
-  const handleSaveProfile = () => {
-    console.log("Profile saved:", profile);
+    setActiveTab(newValue);
   };
 
   useEffect(() => {
     (async () => {
-      const [routes, preview] = await Promise.all([getRoutes(), getPreview()]);
-      setCards(
-        routes.data.map((route) => {
-          return {
-            cameraName: route.cameraId,
-            videoURL: route.videoFeed,
-            imagePreview: preview.data.find(
-              (preview) => preview.cameraId === route.cameraId
-            ).imageURL,
-          };
-        })
-      );
+      try {
+        const [routes, preview] = await Promise.all([
+          getRoutes(),
+          getPreview(),
+        ]);
+        setCards(
+          routes.data.map((route) => {
+            return {
+              _id: route._id,
+              cameraName: route.cameraName,
+              imagePreview: preview.data.find(
+                (preview) => preview.driverId === route.driverId
+              ).imageURL,
+              polygons: JSON.parse(route.coordinates).map(
+                (coordinateList, index) => ({
+                  id: index + 1,
+                  isActive: false,
+                  coordinates: coordinateList.map(([x, y]) => ({ x, y })),
+                })
+              ),
+            };
+          })
+        );
+      } catch (error) {
+        toast.error("Failed to load live feed, please try again later.");
+        //TODO: Redirect
+        // navigate("/");
+      } finally {
+        setLoading(false);
+      }
     })();
-  }, []);
+    // eslint-disable-next-line
+  }, [reloadFlag]);
 
-  console.log(cards);
-
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress color="secondary" size={100} />
+      </Box>
+    );
+  }
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box>
       <Tabs
-        value={value}
+        value={activeTab}
         onChange={handleChange}
         textColor="secondary"
         indicatorColor="secondary"
-        aria-label="secondary tabs example"
+        variant="fullWidth"
       >
-        <Tab value="one" label="Profile" />
-        <Tab value="two" label="Camera Settings" />
+        <Tab
+          label={<Typography variant="h5">{"Camera Settings"}</Typography>}
+          value={0}
+        />
+        <Tab
+          label={<Typography variant="h5">{"Profile Settings"}</Typography>}
+          value={1}
+        />
       </Tabs>
 
-      <ProfileTabPanel
-        value={value}
-        index="one"
-        profile={profile}
-        handleProfileChange={handleProfileChange}
-        handleSaveProfile={handleSaveProfile}
-      />
-
-      <TabPanel value={value} index="two">
+      <TabPanel value={activeTab} index={0}>
         <Box sx={{ p: 2 }}>
           <Box>
             <Box>
-              <Cards cards={cards} isSetting={true} />
+              <Cards
+                cards={cards}
+                isSetting={true}
+                setReloadFlag={setReloadFlag}
+              />
             </Box>
           </Box>
         </Box>
       </TabPanel>
+
+      <ProfileTabPanel value={activeTab} index={1} />
     </Box>
   );
 };

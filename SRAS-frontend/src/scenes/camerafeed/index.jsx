@@ -1,39 +1,73 @@
-import { Box, useTheme, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "../../components/Header";
-import { tokens } from "../../theme";
 import "./camerafeed.css";
 import Cards from "../../components/Cards/Cards";
 import React, { useEffect, useState } from "react";
 import { getRoutes, getPreview } from "../../services/liveFeedServices";
+import { toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 const Camerafeed = ({ withInference = false }) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
-      const [routes, preview] = await Promise.all([getRoutes(), getPreview()]);
-      setCards(
-        routes.data.map((route) => {
-          return {
-            cameraName: route.cameraId,
-            videoURL: withInference
-              ? route.videoFeedWithInference
-              : route.videoFeed,
-            imagePreview: preview.data.find(
-              (preview) => preview.cameraId === route.cameraId
-            ).imageURL,
-          };
-        })
-      );
+      try {
+        const [routes, preview] = await Promise.all([
+          getRoutes(),
+          getPreview(),
+        ]);
+        setCards(
+          routes.data.map((route) => {
+            return {
+              cameraName: route.cameraName,
+              videoURL: withInference
+                ? route.videoFeedWithInference
+                : route.videoFeed,
+              imagePreview: preview.data.find(
+                (preview) => preview.driverId === route.driverId
+              ).imageURL,
+            };
+          })
+        );
+      } catch (error) {
+        toast.error("Failed to load live feed, please try again later.");
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
     })();
+    // eslint-disable-next-line
   }, [withInference]);
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress color="secondary" size={100} />
+      </Box>
+    );
+  }
   return (
     <Box>
       <Box>
-        <Header />
+        <Header
+          title={
+            withInference ? "Camera Live Feed Prediction" : "Camera Live Feed"
+          }
+          sx={{
+            marginLeft: "1rem",
+          }}
+        />
         <Cards cards={cards} />
       </Box>
     </Box>

@@ -1,15 +1,13 @@
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
-import { ColorModeContext, tokens } from "../../theme";
+import { ColorModeContext } from "../../theme";
 import { useNavigate } from "react-router-dom";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { ForkRight } from "@mui/icons-material";
 
 const Topbar = () => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
   const navigate = useNavigate();
 
@@ -17,17 +15,22 @@ const Topbar = () => {
     <Box display="flex" justifyContent="flex-end" p={3}>
       {/* ICONS */}
       <Box display="flex">
-        <IconButton onClick={colorMode.toggleColorMode} sx={{ m: "0px 20px 0px 0px" }} >
+        <IconButton
+          onClick={colorMode.toggleColorMode}
+          sx={{ m: "0px 20px 0px 0px" }}
+        >
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
           ) : (
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton onClick={() => navigate('/settings')} sx={{ m: "0px 15px 0px 0px" }}>
+        <IconButton
+          onClick={() => navigate("/settings")}
+          sx={{ m: "0px 15px 0px 0px" }}
+        >
           <SettingsOutlinedIcon />
         </IconButton>
-
       </Box>
     </Box>
   );

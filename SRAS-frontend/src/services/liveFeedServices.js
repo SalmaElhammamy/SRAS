@@ -5,5 +5,9 @@ export const getRoutes = async () => {
 };
 
 export const getPreview = async () => {
-  return await GET(`video/preview/`);
+  return await GET(`video/preview`);
+};
+
+export const getHeatmaps = async () => {
+  return await GET(`video/heatmaps`);
 };

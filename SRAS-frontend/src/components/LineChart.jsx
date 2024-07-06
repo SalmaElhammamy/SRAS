@@ -2,6 +2,7 @@ import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { mockLineData as data } from "../data/mockData";
+import { Box } from "@mui/material";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
@@ -43,29 +44,12 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
           },
         },
       }}
-      colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
+      colors={isDashboard ? { datum: "color" } : { scheme: "paired" }} // added
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-      xScale={{ type: "point" }}
-      yScale={{
-        type: "linear",
-        min: "auto",
-        max: "auto",
-        stacked: true,
-        reverse: false,
-      }}
       yFormat=" >-.2f"
       curve="catmullRom"
       axisTop={null}
       axisRight={null}
-      axisBottom={{
-        orient: "bottom",
-        tickSize: 0,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
-        legendOffset: 36,
-        legendPosition: "middle",
-      }}
       axisLeft={{
         orient: "left",
         tickValues: 5, // added
@@ -75,6 +59,15 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
         legend: isDashboard ? undefined : "count", // added
         legendOffset: -40,
         legendPosition: "middle",
+      }}
+      axisBottom={{
+        orient: "bottom",
+        tickSize: 0,
+        tickPadding: 5,
+        tickRotation: -45,
+        format: (x, index) => {
+          return "";
+        },
       }}
       enableGridX={false}
       enableGridY={false}

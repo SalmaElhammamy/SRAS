@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Card.css";
 import { FaTimes } from "react-icons/fa";
 import PolygonDrawer from "../Polygon";
 
-const Card = ({ cameraName, videoURL, imagePreview, isSetting }) => {
+const Card = ({
+  cameraName,
+  videoURL,
+  imagePreview,
+  isSetting,
+  polygons,
+  _id,
+  setReloadFlag,
+}) => {
   const [expanded, setExpanded] = useState(false);
-
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
+
   const width = 1000;
   const height = 600;
 
@@ -39,6 +47,10 @@ const Card = ({ cameraName, videoURL, imagePreview, isSetting }) => {
               width={width}
               onClick={setExpanded}
               image={imagePreview}
+              key={videoURL}
+              polygons={polygons}
+              _id={_id}
+              setReloadFlag={setReloadFlag}
             />
           ) : (
             <img

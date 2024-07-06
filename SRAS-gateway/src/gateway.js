@@ -13,15 +13,19 @@ app.use(express.json());
 const mainRouter = express.Router();
 app.use("/API", mainRouter);
 
-const videoRoutes = require("./routes/videos");
-const emailRoutes = require("./routes/mails");
-const testRoutes = require("./routes/testRoutes");
-const settinsRoutes = require("./routes/settings");
+const videoRoutes = require("./routes/videos.route");
+const emailRoutes = require("./routes/mails.route");
+const testRoutes = require("./routes/test.route");
+const settinsRoutes = require("./routes/settings.route");
+const dashBoardRoutes = require("./routes/dashboard.route");
+const marketingRoutes = require("./routes/marketing.route");
 
 mainRouter.use("/video", videoRoutes);
 mainRouter.use("/test", testRoutes);
 mainRouter.use("/email", emailRoutes);
 mainRouter.use("/settings", settinsRoutes);
+mainRouter.use("/dashboard", dashBoardRoutes);
+mainRouter.use("/marketing", marketingRoutes);
 
 const port = process.env.GATEWAY_PORT;
 

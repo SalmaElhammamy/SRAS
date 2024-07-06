@@ -26,10 +26,15 @@ dist-ssr
 *.sln
 *.sw?
 *yolo
+yolo*
 /SRAS-frontend/node_modules
 /SRAS-live-feed/venv
 /SRAS-live-feed/yolov8*
 /SRAS-live-feed/DemoVideos
 /SRAS-mock-server/node_modules
 /SRAS-gateway/node_modules
+/SRAS-mail-server/node_modules
+/SRAS-db/node_modules
+/SRAS-db/package-lock.json
+/SRAS-live-feed/temp.py
 /SRAS-mail-server/node_modules
